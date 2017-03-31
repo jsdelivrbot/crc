@@ -1,0 +1,224 @@
+{% extends 'teledm/base.html' %}
+{% load staticfiles %}
+
+{% block css%}
+    <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/form.css' %}" >
+{% endblock %}
+
+{% block form %}
+</br>
+<div class="row">
+    <form id="moyenne" action="" method="post" class="form-horizontal">{% csrf_token %}      
+        <div class="row" id="Sat">
+            <div class="row">
+                <label>Sélection de la donnée</label>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <select class="form-control" name="type" id="typeSel" >
+                        <option selected hidden>Type de données</option>
+                    </select>
+                    <select class="form-control" name="capteur" id="capteurSel" >
+                        <option selected hidden>Capteur/Source</option>
+                    </select>
+                    <select class="form-control" name="produit" id="produitSel" >
+                        <option selected hidden>Produit</option>
+                    </select>
+                </div>
+                <div class="col-lg-6">
+                    <select class="form-control" name="resospatiale" id="resospatialeSel" >
+                        <option selected hidden>Résolution spatiale</option>
+                    </select>
+                    <select class="form-control" name="pasdetemps" id="pasdetempsSel" >
+                        <option selected hidden>Résolution temporelle</option>
+                    </select>
+                    <select class="form-control" name="variable" id="variableSel" >
+                        <option selected hidden>Variable</option>
+                    </select>
+                    <select class="form-control" name="level1" id="levelSel" >
+                        <option data-hidden="true">Layer</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="Periode">
+            <div class="row">
+                <label>Période de traitement : </label>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <label for="date1" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
+                        <input id="date1" name="datedebut" type="text" class="date-picker form-control"/>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <label for="date2" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
+                        <input id="date2" name="datefin" type="text" class="date-picker form-control"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="Zone">
+            <div class="row">
+                    <label>Zone et découpage géographique</label>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <select class="form-control" name="pays" id="pays">
+                        <option selected hidden>Pays</option>
+                    </select>
+                </div>
+                <div class="col-lg-6">
+                    <select class="form-control" name="decoupage" id="decoupage" >
+                        <option selected hidden><b>Echelle de découpage</b></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        </br>
+        <div>
+            <input type="submit" value="SUBMIT" name="submit">
+        </div>
+    </form>
+    <form action="" method="post" class="form-horizontal">{% csrf_token %}
+        <input class="form-control" type="hidden" name= "filename" id="filename" value="">
+        <input type="submit" value="Download" name="submit">
+    </form>
+</div>
+{% endblock %}
+
+
+{% block content1 %}
+        <div class="row">
+            <div id="mapcontainer"></div>
+        </div>
+        <div class="row">
+            <select id="dates" name="dates" style="width: 100px !important; min-width: 50px; max-width: 50px;">
+            </select>
+            <select id="calcul" name="calcul" style="width: 140px !important; min-width: 50px; max-width: 50px;">
+                <option value="lvmean">valeurs moyennes</option>
+                <option value="lvmax">valeurs maximales</option>
+                <option value="lvmin">valeurs minimales</option>
+                <option value="lvstd">valeurs d'écart type</option>
+            </select>
+            <select id="colorAxis" name="color" style="width: 140px !important; min-width: 50px; max-width: 50px;">
+                <option selected hidden><b>couleur carto</b></option>
+                <option value="jaune">jaune</option>
+                <option value="bleu">bleu</option>
+                <option value="brun">brun</option>
+                <option value="brun2">brun 2</option>
+                <option value="vert">vert</option>
+            </select>
+            <div id="load" >
+                <!--<img src="{% static 'teledm/images/load.gif' %}"/>-->
+            </div>
+        </div>
+{% endblock %}
+
+
+{% block content2 %}
+    <div class="row" id="containerProfil">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="row">
+                    <label>Mesures in situ</label>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <select class="form-control" name="mesure" id="mesureIS" >
+                            <option selected hidden>Type</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">                    
+                        <select class="form-control" name="stations" id="stationsIS" >
+                            <option selected hidden>Station</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">
+                        <select class="form-control" name="niveau" id="niveauIS" >
+                            <option selected hidden>Niveau</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <select class="form-control" name="variables" id="variablesIS" >
+                            <option selected hidden>Variable</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">
+                        <select class="form-control" name="resoTempo" id="resoTempoIS" >
+                            <option selected hidden>Resolution Temporelle</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">                    
+                        <input type="button" id="addIS" value="Plot"/>
+                    </div>
+                </div>                
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <label>Donnees Epidemiologiques</label>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <select class="form-control" name="epidemio" id="epidemioEP" >
+                            <option selected hidden>Type</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">
+                        <select class="form-control" name="pays" id="paysEP" >
+                            <option selected hidden>Pays</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">
+                        <select class="form-control" name="echelle" id="echelleEP" >
+                            <option selected hidden>Echelle</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <select class="form-control" name="district" id="districtEP" >
+                            <option selected hidden>District</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">
+                        <select class="form-control" name="variable" id="variableEP" >
+                            <option selected hidden>Variable</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="button" id="addEP" value="Plot"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                </br>
+                <input type="button" id="clear" value="Clear" name="clear"/>
+            </div>
+        </div>
+        <div class="row">
+            <div id="plotcontainer" ></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js%}
+    <script type="text/javascript">
+        var addr = "{% static 'teledm/shapes/' %}";
+    </script>
+    <!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>-->
+    <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/maps/modules/map.js"></script>
+    
+    <!--<script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>-->
+    <!--<script type="text/javascript" src="{% static 'highcharts/js/highcharts.js' %}"></script>-->
+    <!--<script type="text/javascript" src="{% static 'highmaps/js/highmaps.js' %}"></script>-->
+    <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="{% static 'teledm/js/mapDistForm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'teledm/js/distPlot.js' %}"></script>
+{% endblock %}
