@@ -55,6 +55,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!--
                         <div class="col-sm-6">
                             <div class="row">
                                 <div class="input-group">
@@ -63,6 +64,7 @@
                                 </div>
                             </div>
                         </div>
+                        -->
                     </div>
                     </br>
                     <div class="row">
@@ -88,7 +90,7 @@
                     <div class="col-lg-8">
                         <div class="row">
                             <div class="form-group">
-                                <label>Thème de la colorbar:</label>			 
+                                <label>Thème de la colorbar:</label> 
                                 <select class="form-control" id="Colorbar" onChange="setColorbar()">
                                     <option>rainbow</option>
                                     <option>occam</option>
@@ -105,7 +107,7 @@
                         </div>
                         <div class="row">
                             <div class="form-group">
-                                <label>Niveau de dégradé</label>			 
+                                <label>Niveau de dégradé</label> 
                                 <select class="form-control" name="colorbandNum" onChange="setColorband()">
                                         <option value="10">10</option>
                                         <option value="20">20</option>
@@ -121,10 +123,10 @@
                                 <label>Colorscale min/max : </label>
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <input type="number" step="any" id="ScaleMin" name="scaleMin" min="-100" max="400" value="-50" class="form-control">
+                                        <input type="number" id="ScaleMin" name="scaleMin" min="-100" max="400" value="" class="form-control">
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <input type="number" step="any" id="ScaleMax" name="scaleMax" min="0" max="400" value="50" class="form-control">
+                                        <input type="number" id="ScaleMax" name="scaleMax" min="0" max="400" value="" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -159,14 +161,7 @@
 
 {% block content2 %}
     <div class="row">
-        <div class="col-lg-4">
-            <div class="col-lg-4">
-                <input type="button" id="profil" value="Profil Temporel"/>
-            </div>
-            <div class="col-lg-4">
-                <input type="button" id="export" value="Export Subset"/>
-            </div>
-        </div>
+        <input type="button" id="profil" value="Profil Temporel"/>
     </div>
     <div class="row" id="containerProfil">
         <div class="row">
@@ -210,7 +205,7 @@
                     <select class="form-control" name="district" id="districtEP" >
                         <option selected hidden>District</option>
                     </select>
-                    <select class="form-control" name="variable" id="variableEP" >
+                    <select class="form-control" name="variables" id="variableEP" >
                         <option selected hidden>Variable</option>
                     </select>
                     <input type="button" id="addEP" value="Plot"/>
@@ -222,7 +217,9 @@
         </div>
     </div>
     </br>
-    
+    <div class="row">
+        <input type="button" id="export" value="Export Subset"/>
+    </div>
     <div class="row" id="containerExport">
         <div class="col-lg-4">
             <div class="row">
@@ -263,7 +260,7 @@
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
     <!--<script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>-->
     <script type="text/javascript" src="https://openlayers.org/api/OpenLayers.js"></script>
-    <script type="text/javascript" src="https://maps.stamen.com/js/tile.stamen.js?v1.3.2"></script>
+    <!--<script type="text/javascript" src="https://maps.stamen.com/js/tile.stamen.js?v1.3.2"></script>-->
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
     <!--<script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>-->
     <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>   

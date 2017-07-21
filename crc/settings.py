@@ -4,18 +4,23 @@ settings for crc project.
 """
 
 import os
+import setting_keys
 
 DIRDB = "/data/climdata/TDS_DATA/TELEDM"
 
 #from django.core.urlresolvers import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+TDS_URL = "https://%sclimdata.u-bourgogne.fr/thredds" % ('%s')
+TDS_USER = setting_keys.username
+TDS_PWD = setting_keys.password
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'fo9r1bxde8io8jz_9fr3*%93m3zf+p^)acos)9#@%(oe1+@a@z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['climdata.u-bourgogne.fr']
 
 # Application definition
 INSTALLED_APPS = [
@@ -54,7 +59,7 @@ BOWER_INSTALLED_APPS = (
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'teledm@u-bourgogne.fr'
 SERVER_EMAIL = 'teledm@u-bourgogne.fr'
-EMAIL_HOST = 'smtp.u-bourgogne.fr'
+EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''

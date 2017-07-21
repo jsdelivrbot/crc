@@ -1,0 +1,3 @@
+#!/bin/ksh
+
+cp /archive/crct/shared/climdata/TELEDM/crc/teledm/static/teledm/js/* /archive/crct/shared/climdata/TELEDM/crc/static/teledm/js/

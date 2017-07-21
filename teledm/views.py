@@ -1,20 +1,25 @@
 #-*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response, HttpResponse
+from django.shortcuts import render_to_response, HttpResponse, render
+from wsgiref.util import FileWrapper
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.datastructures import MultiValueDictKeyError
 from django.conf import settings
 from sendfile import sendfile
+import mimetypes
 import json, simplejson
+import requests
 import os
 import pandas as pd
 import numpy as np
 from datetime import datetime
 
+from pathFiles import PathFile
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
-from scatterPlots import scatterSatStation, scatter2Sat_Temporel, scatter2Sat_Spatial
+from scatterPlots import scatterSatStation, scatter2Sat_Temporel, scatter2Sat_Spatial, scatterSatEpidemio
 from Util import *
 
 import logging
@@ -25,57 +30,113 @@ tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))
 ddirDB = getattr(settings, "DIRDB", None)
 ddir = os.path.join(ddirDB, "in_situ")
 
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
-def home(request):
-    if request.is_ajax():
-        dates = [d.strftime('%Y-%m-%d') for d in pd.date_range('2014-01-01','2014-01-31', freq='D')]
-        datas = np.random.randint(0,3,31).tolist()
-        datas = {'dates':dates, 'datas':datas}
-        logger.debug("Debug message!")
-        logger.info("Info message!")
-        logger.warning("Warning message!")
-        logger.error("Error message!")
-        logger.critical("Critical message!")
-        return HttpResponse(json.dumps(datas), content_type='teledm/home.html')
-    else:
-        logger.debug("this is a debug message!")
-        return render_to_response('teledm/home.html', context_instance=RequestContext(request))
+
+def server_error(request):
+    response = render('teledm/500.html',context_instance=RequestContext(request))
+    response.status_code = 500
+    return response
+
+def proxyNCSS(request, path):
+    params = '?' + '&'.join(['{}={}'.format(k,v) for k,v in request.GET.iteritems()])
+    url = "https://climdata.u-bourgogne.fr/thredds/ncss/{}?{}".format(path,params)
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    return HttpResponse(response.content)
+
+
+def proxyDownload(request, path):
+    params = '?' + '&'.join(['{}={}'.format(k,v) for k,v in request.GET.iteritems()])
+    url = os.path.join(settings.TDS_URL % (settings.TDS_USER+':'+settings.TDS_PWD+'@'),path+params)
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    return HttpResponse(response.content)
+
+
+def proxyAjax(request, path):    
+    url = os.path.join(settings.TDS_URL % (settings.TDS_USER +':'+settings.TDS_PWD+'@'), path)
+    try:
+        response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    except requests.ConnectionError:
+        print(url)
+        return render('500.html', {'erreur':'Connexion Impossible'})
+    return HttpResponse(response.content)
     
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+
+def colorbar(request, path):
+    params = '?' + '&'.join(['{}={}'.format(k,v) for k,v in request.GET.iteritems()])
+    url = os.path.join(settings.TDS_URL % (''), path+params)
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    return HttpResponse(response.content, status=int(response.status_code))
+
+def dates(request, path):
+    params = '?' + '&'.join(['{}={}'.format(k,v) for k,v in request.GET.iteritems()])
+    url = os.path.join(settings.TDS_URL % (''), path + params)
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    return HttpResponse(response.content, status=int(response.status_code))
+
+
+def minmax(request, path):
+    params = '?' + '&'.join(['{}={}'.format(k,v) for k,v in request.GET.iteritems()])
+    url = os.path.join(settings.TDS_URL % (''), path + params)
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    return HttpResponse(response.content, status=int(response.status_code))
+
+
+def proxyWMS(request, path):
+    params = '?' + '&'.join(['{}={}'.format(k,v) for k,v in request.GET.iteritems()])
+    url = os.path.join(settings.TDS_URL % (settings.TDS_USER+':'+settings.TDS_PWD+'@'),path+params)
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    return HttpResponse(response.content, status=int(response.status_code))
+
+
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+def home(request):
+    return render(request, 'teledm/home.html')
+
+
+def scriptPy(request, code):
+    script = code
+    filename = os.path.join(settings.STATIC_ROOT, 'teledm/scripts', script)
+    wrapper = FileWrapper(open(filename))
+    content_type = mimetypes.guess_type(filename)[0]
+    response = HttpResponse(wrapper,content_type=content_type)
+    response['Content-Length'] = os.path.getsize(filename)
+    response['Content-Disposition'] = "attachment; filename=%s" % script
+    return response
+
+def scriptR(request):
+    filename = os.path.join(settings.STATIC_ROOT, 'teledm/scripts/readNC.R')
+    wrapper = FileWrapper(open(filename))
+    content_type = mimetypes.guess_type(filename)[0]
+    response = HttpResponse(wrapper,content_type=content_type)
+    response['Content-Length'] = os.path.getsize(filename)
+    response['Content-Disposition'] = "attachment; filename=%s" % 'readNC.R'
+    return response
+
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapViewer(request):
-    print request.POST
+    kwargs = request.POST
+    print(kwargs)
     if request.is_ajax():
+        variable = str(kwargs['variables'])
         logger.debug("Debug message!")
         logger.info("Info message!")
         logger.warning("Warning message!")
         logger.error("Error message!")
         logger.critical("Critical message!")
-        if 'mesure' in request.POST.keys():
-            mesure = request.POST['mesure']
-            station = request.POST['stations']
-            variable = str(request.POST['variables'])
-            resoTempo = request.POST['resoTempo']
-            try:
-                niveau = request.POST['niveau']
-                df = pd.read_csv(os.path.join(ddir, mesure, 'niveau_'+niveau, station+'_aeronet_'+niveau+'_'+resoTempo+'.csv'), parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-            except KeyError:
-                df = pd.read_csv(os.path.join(ddir, mesure, station+'_'+mesure+'_'+resoTempo+'.csv'), parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-            geo = station
+        if 'mesure' in kwargs.keys():
+            fcsv = PathFile(**kwargs).csv
+            df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+            geo = kwargs['stations']
         else:
-            epidemio = request.POST['epidemio']
-            pays = request.POST['pays']
-            echelle = request.POST['echelle']
-            variable = str(request.POST['variable'])
+            fcsv = PathFile(**kwargs).csv
             try:
-                district = request.POST['district']
-                csv = pd.read_csv(os.path.join(ddir, epidemio, pays+'_'+epidemio+'_'+echelle+'.csv'), parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
-                df = csv[csv.district==district]
-                geo = district
+                geo = kwargs['district']
+                csv = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
+                df = csv[csv.district==geo]
             except KeyError:
-                df = pd.read_csv(os.path.join(ddir, epidemio, pays+'_'+epidemio+'_'+echelle+'.csv'), parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-                geo = pays
+                geo = kwargs['pays']
+                df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
         dictdatas = {'header':geo, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}        
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='text/json')
     else:
@@ -84,139 +145,150 @@ def mapViewer(request):
         logger.warning("Warning message!")
         logger.error("Error message!")
         logger.critical("Critical message!")
-        return render_to_response('teledm/mapViewer.html',context_instance=RequestContext(request))
+        return render(request, 'teledm/mapViewer.html')
 
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapDist(request):
-    print request.POST
+    kwargs = request.POST
     if request.is_ajax():
-        if 'capteur' in request.POST.keys():
+        if 'capteur' in kwargs.keys():
             ddirout = settings.MEDIA_ROOT
-            deb = request.POST['datedebut'] 
-            fin = request.POST['datefin'] 
-            pays = request.POST['pays']  
-            niveau = request.POST['decoupage'] 
-            types = request.POST['type'] 
-            sat = request.POST['capteur']  
-            prod = request.POST['produit']
-            res_temp = request.POST['pasdetemps']
-            res = request.POST['resospatiale']
-            varname = request.POST['variable'] 
-            shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
-            ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)
+            deb = kwargs['datedebut']
+            fin = kwargs['datefin']
+            pays = kwargs['pays']
+            niveau = kwargs['decoupage'] 
+            types = kwargs['type'] 
+            sat = kwargs['capteur']
+            prod = kwargs['produit']
+            res_temp = kwargs['pasdetemps']
+            res = kwargs['resospatiale']
+            varname = kwargs['variables']
+            if 'level1' in kwargs.keys():
+                level = int(kwargs['level1']) - 1
+            else:
+                level = -1
+            ncfile = PathFile(**kwargs).nc
+            fshape = PathFile(**kwargs).carto
+            ldf, filename = calc_moy(ddirout,ncfile, fshape, deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,level)
             val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
             datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
             list_dates = ldf['vmean'].index.values.tolist()
             geojson = pays+"_"+niveau+"_sante.geojson"
-            filename = varname + '_' + prod + '_r' + res[3:] + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
             dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'filename':filename}
-        elif 'mesure' in request.POST.keys():
-            mesure = request.POST['mesure']
-            station = request.POST['stations']
-            variable = str(request.POST['variables'])
-            resoTempo = request.POST['resoTempo']
-            try:
-                niveau = request.POST['niveau']
-                df = pd.read_csv(os.path.join(ddir, mesure, 'niveau_'+niveau, station+'_aeronet_'+niveau+'_'+resoTempo+'.csv'), parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-            except KeyError:
-                df = pd.read_csv(os.path.join(ddir, mesure, station+'_'+mesure+'_'+resoTempo+'.csv'), parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-            dictdatas = {'header':station, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
+            print(filename)
+        elif 'mesure' in kwargs.keys():
+            variable = str(kwargs['variables'])
+            fcsv = PathFile(**kwargs).csv
+            df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+            geo = kwargs['stations']
+            dictdatas = {'header':geo, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
         else:
-            epidemio = request.POST['epidemio']
-            pays = request.POST['pays']
-            echelle = request.POST['echelle']
-            variable = str(request.POST['variable'])
-            print variable
+            variable = str(kwargs['variables'])
+            fcsv = PathFile(**kwargs).csv
             try:
-                district = request.POST['district']
-                csv = pd.read_csv(os.path.join(ddir, epidemio, pays+'_'+epidemio+'_'+echelle+'.csv'), parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
-                df = csv[csv.district==district]
+                geo = kwargs['district']
+                csv = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
+                df = csv[csv.district==geo]
             except KeyError:
-                print 'keyError'
-                df = pd.read_csv(os.path.join(ddir, epidemio, pays+'_'+epidemio+'_'+echelle+'.csv'), parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-            dictdatas = {'header':pays, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
+                geo = kwargs['pays']
+                df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+            dictdatas = {'header':geo, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='application/json')
     else:
-        if 'submit' in request.POST.keys():
-            filename = request.POST['filename']
-            return sendfile(request, os.path.join(tmpDir, filename))
+        if 'submit' in kwargs.keys():
+            print(os.path.join(tmpDir, kwargs['filename']))
+            filesend = os.path.join(tmpDir, kwargs['filename'])
+            return sendfile(request, filesend)
         else:
-            return render_to_response('teledm/mapDist.html',context_instance=RequestContext(request))
+            return render(request, 'teledm/mapDist.html')
 
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def calval(request):
     if request.is_ajax():
-        print request.POST
-        if request.POST['ulx']:
-            ulx = float(request.POST['ulx'])
-            uly = float(request.POST['uly'])
-            lrx = float(request.POST['lrx'])
-            lry = float(request.POST['lry'])
-            z_buffer = request.POST['buffer']
+        POST = request.POST.copy()
+        try:
+            ulx = float(POST['ulx'])
+            uly = float(POST['uly'])
+            lrx = float(POST['lrx'])
+            lry = float(POST['lry'])
+        except:
+            ulx = POST.get('ulx','')
+            uly = POST.get('uly','')
+            lrx = POST.get('lrx','')
+            lry = POST.get('lry','')
+        z_buffer = POST.get('buffer', '')
+        try:
+            z_buffer = int(z_buffer)
+        except:
+            pass
+        pas_de_temps1 = POST['pasdetemps1']
+        datedebut = POST['datedebut']
+        datefin = POST['datefin']
+        type1 = POST['type1']
+        sat1 = POST['capteur1']
+        prd_sat1 = POST['produit1']
+        res_sat1 = POST['resospatiale1'][3:]
+        variable_sat1 = POST['variable1']
+        if 'level1' in POST.keys():
+            level_sat1 = int(POST['level1']) - 1
         else:
-            z_buffer = int(request.POST['buffer'])
-            ulx = request.POST['ulx']
-            uly = request.POST['uly']
-            lrx = request.POST['lrx']
-            lry = request.POST['lry']
-        pas_de_temps1 = request.POST['pasdetemps1']
-        datedebut = request.POST['datedebut']
-        datefin = request.POST['datefin']
-        type1 = request.POST['type1']
-        sat1 = request.POST['capteur1']
-        prd_sat1 = request.POST['produit1']
-        res_sat1 = request.POST['resospatiale1'][3:]
-        variable_sat1 = request.POST['variable1']
-        level_sat1 = request.POST['level1']
-        if request.POST['level1'] == 'Layer':
-            level_sat1 = ''
-        else:
-            level_sat1 = np.float(request.POST['level1'])
-        if 'type2' in request.POST:
-            type2 = request.POST['type2']
-            sat2 = request.POST['capteur2']
-            prd_sat2 = request.POST['produit2']
-            res_sat2 = request.POST['resospatiale2'][3:]
-            variable_sat2 = request.POST['variable2']
-            if request.POST['level2'] == 'Layer':
-                level_sat2 = ''
+            level_sat1 = -1
+        ncfile1 = PathFile(**POST).nc1
+        print(ncfile1)
+        if 'type2' in POST.keys():
+            ncfile2 = PathFile(**POST).nc2
+            type2 = POST['type2']
+            sat2 = POST['capteur2']
+            prd_sat2 = POST['produit2']
+            res_sat2 = POST['resospatiale2'][3:]
+            variable_sat2 = POST['variable2']
+            if 'level2' in POST.keys():
+                level_sat2 = int(POST['level2']) - 1
             else:
-                level_sat2 = np.float(request.POST['level2'])
-            if request.POST['action'] == 'scatterTemporel':
-                df = scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
+                level_sat2 = -1
+            if POST['action'] == 'scatterTemporel':
+                df = scatter2Sat_Temporel(ncfile1, ncfile2, ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
                                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2
                                  )
             else:
-                df = scatter2Sat_Spatial(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
+                df = scatter2Sat_Spatial(ncfile1, ncfile2, ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
                                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2
                                  )
         else:
-            periode = request.POST['integration']
-            if 'stationsaeronet' in request.POST:
-                inSitu = "aeronet"
-                station = request.POST['stationsaeronet']
-                varStation = request.POST['variablesaeronet']
-                niveau = request.POST['niveau']
-            else:
-                inSitu = 'teom'
-                station = request.POST['stationsteom']
-                varStation = request.POST['variablesteom']
-                niveau = ''
-            print (ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
-                                   type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
-                                   inSitu, station, varStation, niveau)
-            df = scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
+            if 'mesure' in POST.keys():
+                periode = POST.get('periode', '')
+                inSitu = POST['mesure']
+                station = POST['stations']
+                varStation = POST['variables']
+                try:
+                    niveau = POST['niveau']
+                except MultiValueDictKeyError:
+                    niveau = ''
+                if inSitu == 'meteo':
+                    POST.__setitem__('resoTempo', '5min')
+                    
+                else:
+                    POST.__setitem__('resoTempo', 'h24_h')
+                csvfile = PathFile(**POST).csv
+                df = scatterSatStation(ncfile1, csvfile, ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
                                    type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                                    inSitu, station, varStation, niveau
                                    )
-        for k in ['a', 'prd', 'dates', 'b', 'prdVar_units', 'zone', 'satVar', 'prdVar', 'satVar_units', 'line', 'rCarre', 'sat']:
-            print('%s, %s' % (k,df[k]))
-        print type(df['dates'])
-        print type(df['scatterValues'])
+            else:
+                POST.__setitem__('decoupage', POST['echelle'].lower())
+                epidemio = POST['epidemio']
+                pays = POST['pays']
+                echelle = POST['echelle']
+                district = POST.get('district', '')
+                variables = POST['variables']
+                fshape = PathFile(**POST).carto
+                csvfile = PathFile(**POST).csv
+                df = scatterSatEpidemio(ncfile1, fshape, csvfile, sat1, prd_sat1,datedebut, datefin, variable_sat1, level_sat1,pas_de_temps1,
+                                        epidemio, pays, echelle, district, variables)
         return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
     else:
-        return render_to_response('teledm/calval.html',{},context_instance=RequestContext(request))
+        return render(request,'teledm/calval.html')

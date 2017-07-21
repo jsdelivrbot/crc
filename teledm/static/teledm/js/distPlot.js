@@ -52,7 +52,10 @@ function verifForm(){
         alert("Erreur ! Aucune variable selectionnée !");
         throw new Exception();
     }
-    if($('#levelSel').val() == 'layer'){
+    var level = $("#levelS1").val();
+    if((level=='Layer') & ($('#levelS1').is(':disabled') == false))
+    {
+        
         alert("Erreur ! Aucun niveau de couche sélectionné !");
         throw new Exception();
     }
@@ -303,7 +306,6 @@ $("#addIS").on('click', function(e){
 
 $("#addEP").on('click', function(e){
     e.preventDefault();
-    alert('ok');
     if($("#epidemioEP").val() == 'Type'){
         alert("Erreur ! Aucun type de mesure sélectionné !");
         throw new Exception();

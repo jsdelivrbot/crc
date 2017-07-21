@@ -32,7 +32,7 @@
                     <select class="form-control" name="pasdetemps" id="pasdetempsSel" >
                         <option selected hidden>Résolution temporelle</option>
                     </select>
-                    <select class="form-control" name="variable" id="variableSel" >
+                    <select class="form-control" name="variables" id="variableSel" >
                         <option selected hidden>Variable</option>
                     </select>
                     <select class="form-control" name="level1" id="levelSel" >
@@ -86,6 +86,11 @@
         <input class="form-control" type="hidden" name= "filename" id="filename" value="">
         <input type="submit" value="Download" name="submit">
     </form>
+    <div class="row">
+        {% url 'teledm:scriptPy' code=readNC.py  as scriptUrl %}
+        <a href="{{ scriptUrl}}">readNC.py</a>
+        <a href="{% url 'teledm:scriptR' %}">readNC.R</a>
+    </div>
 </div>
 {% endblock %}
 
@@ -111,9 +116,7 @@
                 <option value="brun2">brun 2</option>
                 <option value="vert">vert</option>
             </select>
-            <div id="load" >
-                <!--<img src="{% static 'teledm/images/load.gif' %}"/>-->
-            </div>
+            <A HREF="{% url 'teledm:stations' %}" onClick="return popup(this, 'notes')">stations Aeronet/teom</A>
         </div>
 {% endblock %}
 
@@ -186,7 +189,7 @@
                         </select>
                     </div>
                     <div class="col-lg-4">
-                        <select class="form-control" name="variable" id="variableEP" >
+                        <select class="form-control" name="variables" id="variableEP" >
                             <option selected hidden>Variable</option>
                         </select>
                     </div>
@@ -217,8 +220,9 @@
     <!--<script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>-->
     <!--<script type="text/javascript" src="{% static 'highcharts/js/highcharts.js' %}"></script>-->
     <!--<script type="text/javascript" src="{% static 'highmaps/js/highmaps.js' %}"></script>-->
-    <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
     <script type="text/javascript" src="{% static 'teledm/js/mapDistForm.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/distPlot.js' %}"></script>
+    <script type="text/javascript" src="{% static 'teledm/js/home.js' %}"></script>
 {% endblock %}

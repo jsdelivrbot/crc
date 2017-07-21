@@ -18,12 +18,12 @@
             </div>
             <div class="col-lg-3">
                 <div class="checkbox">
-                    <label><input type="checkbox" id="checkboxSr2" value="S2" onclick="setFormS2();" ><em>Source 2</em></label>
+                    <label><input type="checkbox" id="checkboxSr2" value="S2" onclick="" ><em>Source 2</em></label>
                 </div>
             </div>
             <div class="col-lg-3">
                 <div class="checkbox">
-                    <label><input type="checkbox" id="Option" value="Option" onclick="" ><em>Option</em></label>
+                    <label><input type="checkbox" id="Option" value="Option" onclick="" ><em>Spatial</em></label>
                 </div>
             </div>
         </div>
@@ -70,9 +70,57 @@
                 <select class="form-control" name="variable2" id="variableS2" disabled="true" >
                     <option data-hidden="true">Variable</option>
                 </select>
-                <select class="form-control" name="level2" id="levelS2" disabled="true" >
+                <select class="form-control" name="level2" id="levelSr2" disabled="true" >
                     <option data-hidden="true">Layer</option>
                 </select>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="InSitu">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="checkboxS3" value="S3" onclick=""><em>Mesures</em></label>
+                    </div>
+                    <select class="form-control" name="mesure" id="mesureIS" disabled="true">
+                        <option selected hidden>Type</option>
+                    </select>
+                    <select class="form-control" name="stations" id="stationsIS" disabled="true">
+                        <option selected hidden>Station</option>
+                    </select>
+                    <select class="form-control" name="niveau" id="niveauIS" disabled="true">
+                        <option selected hidden>Niveau</option>
+                    </select>
+                    <select class="form-control" name="variables" id="variablesIS" disabled="true">
+                        <option selected hidden>Variable</option>
+                    </select>
+                    <select class="form-control" name="integration" id="integrationIS" disabled="true">
+                        <option data-hidden="true">Integration</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="checkboxS4" value="S4" onclick=""><em>Epidemiologie</em></label>
+                    </div>
+                    <select class="form-control" name="epidemio" id="epidemioEP" disabled="true">
+                        <option selected hidden>Type</option>
+                    </select>
+                    <select class="form-control" name="pays" id="paysEP" disabled="true">
+                        <option selected hidden>Pays</option>
+                    </select>
+                    <select class="form-control" name="echelle" id="echelleEP" disabled="true">
+                        <option selected hidden>Echelle</option>
+                    </select>
+                    <select class="form-control" name="district" id="districtEP" disabled="true">
+                        <option selected hidden>District</option>
+                    </select>
+                    <select class="form-control" name="variables" id="variableEP" disabled="true">
+                        <option selected hidden>Variable</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -109,11 +157,8 @@
         <div class="row">
             <div class="col-lg-6 col-lg-offset-1">
                 <div class="row">
-                    <select class="form-control" name="buffer" id="buffer" >
+                    <select class="form-control" name="buffer" id="bufferIS" >
                         <option data-hidden="true">Buffer</option>
-                        <option value="9">9</option>
-                        <option value="12">25</option>
-                        <option value="15">49</option>
                     </select>
                 </div>
             </div>
@@ -138,58 +183,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row" id="InSitu">
-        <div class="row">
-            <label>Données In Situ</label>
-        </div>
-        <div class="row">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="row">
-                        <div class="checkbox">
-                            <label><input type="checkbox" id="checkboxS3" value="S3" onclick="setFormS3();" ><em>Aeronet</em></label>
-                        </div>
-                        <select class="form-control" name="stationsaeronet" id="stationsAeronet" disabled="true">
-                            <option data-hidden="true">Station</option>
-                        </select>
-                        <select class="form-control" name="variablesaeronet" id="variablesAeronet" disabled="true">
-                            <option data-hidden="true">Variable</option>
-                        </select>
-                    </div>
-                    <div class="row">
-                        <select class="form-control" name="niveau" id="niveauAeronet" disabled="true">
-                            <option data-hidden="true">niveau de traitement</option>
-                        </select>
-                    </div>
-                    <br/>
-                </div>
-                <div class="col-lg-6">
-                    <div class="row">
-                        <div class="checkbox">
-                            <label><input type="checkbox" id="checkboxS4" value="S4" onclick="setFormS4();" ><em>Teom</em></label>
-                        </div>
-                        <select class="form-control" name="stationsteom" id="stationsTeom" disabled="true">
-                            <option data-hidden="true">Station</option>
-                        </select>
-                        <select class="form-control" name="variablesteom" id="variablesTeom" disabled="true">
-                            <option data-hidden="true">Variable</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <h5>Periode d'intégration</h5>
-                    <h6>(Aeronet/Teom)</h6>
-                </div>
-                <div class="col-lg-6">
-                    <select class="form-control" name="integration" id="integration" disabled="true" >
-                        <option data-hidden="true"></option>
-                    </select>
-                </div>
-            </div>
-        </div>
+        <A HREF="{% url 'teledm:localisation' %}" onClick="return popup(this, 'notes')">localisation</A>
     </div>
     </br>
     <div class="row">
@@ -212,5 +206,7 @@
     <!--<script type="text/javascript" src="{% static 'highcharts/js/highcharts.js' %}"></script>-->
     <script type="text/javascript" src="{% static 'highcharts-regression/highcharts-regression.js' %}"></script>
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
     <script type="text/javascript" src="{% static 'teledm/js/calvalForm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'teledm/js/localisation.js' %}"></script>
 {% endblock %}
