@@ -12,7 +12,7 @@
             <form id="mapForm" action="" method="post" class="form-horizontal">{% csrf_token %}      
                 <div class="row" id="Sat">
                     <div class="row">
-                        <label>Sélection de la donnée</label>
+                        <label>Sélection de la donnée spatialisée</label>
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
@@ -55,42 +55,20 @@
                                 </div>
                             </div>
                         </div>
-                        <!--
-                        <div class="col-sm-6">
-                            <div class="row">
-                                <div class="input-group">
-                                    <label for="date1" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
-                                    <input id="date1" name="datefin" type="text" class="date-picker form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                        -->
                     </div>
                     </br>
                     <div class="row">
-                        <div id="dateAnimation"></div>
-                        <div role="group" aria-label="Animation controls">
-                            <button type="button" class="btn btn-default btn-sm" id="backward" onclick="prevDate()">
-                            <span class="glyphicon glyphicon-backward"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm" id="forward" onclick="nextDate()">
-                            <span class="glyphicon glyphicon-forward"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm" id="stop" onclick="stopAnim()">
-                            <span class="glyphicon glyphicon-stop"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm" id="play" onclick="animation()">
-                            <span class="glyphicon glyphicon-play"></span>
-                            </button>
-                            <span id="info"></span>
+                        <div>
+                            <input type="button" value="Mise à jour de la carte" onclick="updateMap()">
                         </div>
+                        <div id="dateAnimation"></div>
                     </div>
                 </div>
                 <div class="row" id="theme">
                     <div class="col-lg-8">
                         <div class="row">
                             <div class="form-group">
-                                <label>Thème de la colorbar:</label> 
+                                <label>Thème de la barre de couleur:</label> 
                                 <select class="form-control" id="Colorbar" onChange="setColorbar()">
                                     <option>rainbow</option>
                                     <option>occam</option>
@@ -108,7 +86,7 @@
                         <div class="row">
                             <div class="form-group">
                                 <label>Niveau de dégradé</label> 
-                                <select class="form-control" name="colorbandNum" onChange="setColorband()">
+                                <select class="form-control" id="colorband" name="colorbandNum" onChange="setColorband()">
                                         <option value="10">10</option>
                                         <option value="20">20</option>
                                         <option value="50">50</option>
@@ -120,13 +98,13 @@
                         </div>
                         <div class="row">
                             <div class="form-group">
-                                <label>Colorscale min/max : </label>
+                                <label>Echelle de couleur min/max : </label>
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <input type="number" id="ScaleMin" name="scaleMin" min="-100" max="400" value="" class="form-control">
+                                        <input type="number" step="0.01" id="ScaleMin" name="scaleMin" min="-100" max="400" value="" class="form-control">
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-6">
-                                        <input type="number" id="ScaleMax" name="scaleMax" min="0" max="400" value="" class="form-control">
+                                        <input type="number" step="0.01" id="ScaleMax" name="scaleMax" min="0" max="400" value="" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -144,9 +122,24 @@
                             <div id="smin"></div>
                         </div>
                     </div>
+                    <div role="group" aria-label="Animation controls">
+                        <div class="row">
+                            <label>Animation</label>
+                        </div>
+                    <button type="button" class="btn btn-default btn-sm" id="backward" onclick="prevDate()">
+                        <span class="glyphicon glyphicon-backward"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" id="forward" onclick="nextDate()">
+                        <span class="glyphicon glyphicon-forward"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" id="stop" onclick="stopAnim()">
+                        <span class="glyphicon glyphicon-stop"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" id="play" onclick="animation()">
+                        <span class="glyphicon glyphicon-play"></span>
+                    </button>
+                        <span id="info"></span>
                 </div>
-                <div>
-                    <input type="button" value="Mise à jour de la carte" onclick="updateMap()">
                 </div>
             </form>
         </div>
@@ -161,9 +154,15 @@
 
 {% block content2 %}
     <div class="row">
-        <input type="button" id="profil" value="Profil Temporel"/>
+        <input type="button" id="profil" value="Profil Temporel" title="Extraction du profil temporel pour
+        les mesures(aeronet, teom, meteo), données épidémiologiques, donnee spatialisee visualisée sur la cartographie"/>
     </div>
     <div class="row" id="containerProfil">
+        <div class="row">
+            <label>Un clic gauche de souris sur la carte préalablement chargée permet d'extraire le profil temporel de la variable considérée </br>
+            Les menus déroulants ci-dessous proposent les mesures de stations aeronet, teom ou météorologiques ainsi que les données épidémiologiques
+            </label>
+        </div>
         <div class="row">
             <div class="col-lg-4">
                 <div class="row">
@@ -186,7 +185,7 @@
                         <option selected hidden>Resolution Temporelle</option>
                     </select>
                     <input type="button" id="addIS" value="Plot"/>
-                </div>                
+                </div>
             </div>
             <div class="col-lg-4">
                 <div class="row">
@@ -218,36 +217,52 @@
     </div>
     </br>
     <div class="row">
-        <input type="button" id="export" value="Export Subset"/>
+        <input type="button" id="export" value="Extraction jeu de données" title="Extraction de la données spatialisée
+        sur une zone géographie choisie,
+        au format NETCDF"/>
     </div>
     <div class="row" id="containerExport">
+        <div class="row">
+            <label>Choisir la zone géographique en renseignant les longitudes-latitudes ou en dessinant à l'aide de la souris(click gauche maintenu) un carré sur la carte</label>
+        </div>
+        <div class="row">
         <div class="col-lg-4">
+            <!--
             <div class="row">
                 <input type="button" id="draw" value="Select LatLon"/>
-            </div class="row">
-            <div class="row">
+            </div>
+            -->
                 <div class="row">
-                    <div class="col-sm-2 col-sm-offset-3">
-                        <input type="text" class="input-small" name="uly" id="uly" placeholder="North"/>
+                    <div class="row">
+                        <div class="col-sm-2 col-sm-offset-3">
+                            <input type="text" class="input-small" name="uly" id="uly" placeholder="North"/>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-2 col-sm-offset-1">
+                    <div class="row">
+                        <div class="col-sm-2 col-sm-offset-1">
                         <input type="text" class="input-small" name="ulx" id="ulx" placeholder="West"/>
+                        </div>
+                        <div class="col-sm-2 col-sm-offset-2">
+                            <input type="text" class="input-small" name="lrx" id="lrx" placeholder="East"/>
+                        </div>
                     </div>
-                    <div class="col-sm-2 col-sm-offset-2">
-                        <input type="text" class="input-small" name="lrx" id="lrx" placeholder="East"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-2 col-sm-offset-3">
-                        <input type="text" class="input-small" name="lry" id="lry" placeholder="South"/>
+                    <div class="row">
+                        <div class="col-sm-2 col-sm-offset-3">
+                            <input type="text" class="input-small" name="lry" id="lry" placeholder="South"/>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-4">
-            <input type="button" id="download" value="Download"/>
+            <div class="col-lg-4">
+                <div class="row">
+                    <input type="button" id="download" value="Téléchargement"/>
+                </div>
+                <div>
+                    <label>Scripts de conversion du format netcdf vers un fichier txt</label>
+                    <a href="{% url 'teledm:nc2txtPy' %}">nc2txt.py</a>
+                    <a href="{% url 'teledm:nc2txtR' %}">nc2txt.R</a>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -6,16 +6,53 @@
     <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/form.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/mapViewer.css' %}"/>
 {% endblock %}
-
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <a class="navbar-brand pull-right" href="https://cnes.fr/fr"><img src="{% static 'teledm/images/cnes.jpeg' %}" height="50px"></a>
+            <a class="navbar-brand pull-right" href="http://climatologie.u-bourgogne.fr/"><img src="{% static 'teledm/images/crc.png' %}" height="50px"/></a>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href={% url 'portailCRC:home' %}><b>Portail</b></a>
+                    </li>
+                    <li>
+                        <a href={% url 'teledm:home' %}><b>Accueil TeleDM</b></a>
+                    </li>
+                    <li class="active">
+                        <a href={% url 'teledm:mapViewer' %}><b>Cartographie</b></a>
+                    </li>
+                    <li>
+                        <a href={% url 'teledm:mapDist' %}><b>Extraction Géographique</b></a>
+                    </li>
+                    <li>
+                        <a href={% url 'teledm:calval' %}><b>Calibration/Validation</b></a>
+                    </li>
+                    <li>
+                        
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
 {% block form %}
         <div class="row">
-            <form id="mapForm" action="" method="post" class="form-horizontal">{% csrf_token %}      
+            <form id="mapForm" action="" method="post" class="form-horizontal">{% csrf_token %}
                 <div class="row" id="Sat">
                     <div class="row">
-                        <label>Sélection de la donnée</label>
+                        <label>Sélection de la donnée spatialisée</label>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-md-6 col-lg-6">
                             <select class="form-control" name="type" id="typeS1" >
                                 <option selected hidden>Type de données</option>
                             </select>
@@ -26,7 +63,7 @@
                                 <option selected hidden>Produit</option>
                             </select>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-md-6 col-lg-6">
                             <select class="form-control" name="resospatiale" id="resospatialeS1" >
                                 <option selected hidden>Résolution spatiale</option>
                             </select>
@@ -47,7 +84,7 @@
                         <label>Période de traitement : </label>
                     </div>
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-md-6 col-lg-6">
                             <div class="row">
                                 <div class="input-group">
                                     <label for="date" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
@@ -55,42 +92,18 @@
                                 </div>
                             </div>
                         </div>
-                        <!--
-                        <div class="col-sm-6">
-                            <div class="row">
-                                <div class="input-group">
-                                    <label for="date1" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
-                                    <input id="date1" name="datefin" type="text" class="date-picker form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                        -->
                     </div>
                     </br>
                     <div class="row">
+                        <input type="button" value="Mise à jour de la carte" onclick="updateMap()">
                         <div id="dateAnimation"></div>
-                        <div role="group" aria-label="Animation controls">
-                            <button type="button" class="btn btn-default btn-sm" id="backward" onclick="prevDate()">
-                            <span class="glyphicon glyphicon-backward"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm" id="forward" onclick="nextDate()">
-                            <span class="glyphicon glyphicon-forward"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm" id="stop" onclick="stopAnim()">
-                            <span class="glyphicon glyphicon-stop"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm" id="play" onclick="animation()">
-                            <span class="glyphicon glyphicon-play"></span>
-                            </button>
-                            <span id="info"></span>
-                        </div>
                     </div>
                 </div>
                 <div class="row" id="theme">
-                    <div class="col-lg-8">
+                    <div class="col-md-8 col-lg-8">
                         <div class="row">
                             <div class="form-group">
-                                <label>Thème de la colorbar:</label> 
+                                <label>Thème de la barre de couleur:</label> 
                                 <select class="form-control" id="Colorbar" onChange="setColorbar()">
                                     <option>rainbow</option>
                                     <option>occam</option>
@@ -108,7 +121,7 @@
                         <div class="row">
                             <div class="form-group">
                                 <label>Niveau de dégradé</label> 
-                                <select class="form-control" name="colorbandNum" onChange="setColorband()">
+                                <select class="form-control" id="colorband" name="colorbandNum" onChange="setColorband()">
                                         <option value="10">10</option>
                                         <option value="20">20</option>
                                         <option value="50">50</option>
@@ -120,23 +133,23 @@
                         </div>
                         <div class="row">
                             <div class="form-group">
-                                <label>Colorscale min/max : </label>
+                                <label>Echelle de couleur min/max : </label>
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6 col-xs-6">
+                                    <div class="col-md-6 col-lg-6">
                                         <input type="number" step="0.01" id="ScaleMin" name="scaleMin" min="-100" max="400" value="" class="form-control">
                                     </div>
-                                    <div class="col-md-6 col-sm-6 col-xs-6">
+                                    <div class="col-md-6 col-lg-6">
                                         <input type="number" step="0.01" id="ScaleMax" name="scaleMax" min="0" max="400" value="" class="form-control">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4" id="scale">
+                    <div class="col-md-4 col-lg-4" id="scale">
                         <div class="col-lg-6" id="colors">
                             <div id="colorbar"></div>
                         </div>
-                        <div class="col-lg-6" id="ranges">
+                        <div class="col-md-6 col-lg-6" id="ranges">
                             <div id="smax"></div>
                             <div id="smidmax"></div>
                             <div id="smid"></div>
@@ -144,9 +157,27 @@
                             <div id="smin"></div>
                         </div>
                     </div>
+                    <div class="row">
+                        <input type="button" value="Mise à jour de la carte" onclick="updateMap()">
+                    </div>
+                    <div role="group" aria-label="Animation controls">
+                        <div class="row">
+                            <label>Animation</label>
+                        </div>
+                    <button type="button" class="btn btn-default btn-sm" id="backward" onclick="prevDate()">
+                        <span class="glyphicon glyphicon-backward"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" id="forward" onclick="nextDate()">
+                        <span class="glyphicon glyphicon-forward"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" id="stop" onclick="stopAnim()">
+                        <span class="glyphicon glyphicon-stop"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" id="play" onclick="animation()">
+                        <span class="glyphicon glyphicon-play"></span>
+                    </button>
+                        <span id="info"></span>
                 </div>
-                <div>
-                    <input type="button" value="Mise à jour de la carte" onclick="updateMap()">
                 </div>
             </form>
         </div>
@@ -155,17 +186,24 @@
 
 {% block content1 %}
     </br>
-    <div id="map" class="map" ></div>
-    <!--<div id="panel" type="button" id="testButton" class="btn btn-primary">TEST BUTTON</div>-->
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <div id="map" class="map" ></div>
+    </div>
 {% endblock %}
 
 {% block content2 %}
     <div class="row">
-        <input type="button" id="profil" value="Profil Temporel"/>
+        <input type="button" id="profil" value="Profil Temporel" title="Extraction du profil temporel pour
+        les mesures(aeronet, teom, meteo), données épidémiologiques, donnee spatialisee visualisée sur la cartographie"/>
     </div>
     <div class="row" id="containerProfil">
         <div class="row">
-            <div class="col-lg-4">
+            <label>Un clic gauche de souris sur la carte préalablement chargée permet d'extraire le profil temporel de la variable considérée </br>
+            Les menus déroulants ci-dessous proposent les mesures de stations aeronet, teom ou météorologiques ainsi que les données épidémiologiques
+            </label>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-lg-4">
                 <div class="row">
                     <label>Mesures in situ</label>
                 </div>
@@ -186,9 +224,9 @@
                         <option selected hidden>Resolution Temporelle</option>
                     </select>
                     <input type="button" id="addIS" value="Plot"/>
-                </div>                
+                </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-md-4 col-lg-4">
                 <div class="row">
                     <label>Donnees Epidemiologiques</label>
                 </div>
@@ -213,18 +251,23 @@
             </div>
         </div>
         <div class="row">
-            <div id="plot"></div>
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div id="plot"></div>
+            </div>
         </div>
     </div>
     </br>
     <div class="row">
-        <input type="button" id="export" value="Export Subset"/>
+        <input type="button" id="export" value="Extraction jeu de données" title="Extraction de la données spatialisée
+        sur une zone géographie choisie,
+        au format NETCDF"/>
     </div>
     <div class="row" id="containerExport">
-        <div class="col-lg-4">
-            <div class="row">
-                <input type="button" id="draw" value="Select LatLon"/>
-            </div class="row">
+        <div class="row">
+            <label>Choisir la zone géographique en renseignant les longitudes-latitudes ou en dessinant à l'aide de la souris(click gauche maintenu) un carré sur la carte</label>
+        </div>
+        <div class="row">
+        <div class="col-md-4 col-lg-4">
             <div class="row">
                 <div class="row">
                     <div class="col-sm-2 col-sm-offset-3">
@@ -233,7 +276,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-2 col-sm-offset-1">
-                        <input type="text" class="input-small" name="ulx" id="ulx" placeholder="West"/>
+                    <input type="text" class="input-small" name="ulx" id="ulx" placeholder="West"/>
                     </div>
                     <div class="col-sm-2 col-sm-offset-2">
                         <input type="text" class="input-small" name="lrx" id="lrx" placeholder="East"/>
@@ -245,9 +288,17 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-4">
-            <input type="button" id="download" value="Download"/>
+            </div>
+            <div class="col-md-4 col-lg-4">
+                <div class="row">
+                    <input type="button" id="download" value="Téléchargement"/>
+                </div>
+                <div>
+                    <label>Scripts de conversion du format netcdf vers un fichier txt</label>
+                    <a href="{% url 'teledm:nc2txtPy' %}">nc2txt.py</a>
+                    <a href="{% url 'teledm:nc2txtR' %}">nc2txt.R</a>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

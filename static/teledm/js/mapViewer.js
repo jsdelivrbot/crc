@@ -139,12 +139,10 @@ function setForm(){
         }
         //var urlInfo = ROOT + '/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
         var urlInfo = ROOT + '/dates/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
-        alert(urlInfo);
         getDateRange(urlInfo);
         setSelect(varInfos.variables.name, selectSource1[5]);
         changeDates(varInfos.debut,varInfos.fin,this.value);
         $("#variableS1").on("change", function(){
-            alert(lstInfos.level);
             var id = $(this).prop('selectedIndex');
             if ($("#produitS1").val() == "omaeruv"){
                 $("#levelS1").prop("disabled", false);
@@ -217,7 +215,7 @@ function createURL(valueSelected, selector){
             listSelected.push(this.value);
         }
     });
-    var ind = listSelected.indexOf(valueSelected);
+    var ind = listSelected.lastIndexOf(valueSelected);
     var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
     if (URL == "/catalog.xml"){
         //var URLCat = ROOT + "/catalogRefs/CatalogTELEDEM.xml";
@@ -282,6 +280,7 @@ function setFormInSitu(){
                 $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
             });
         }else if($(this).val() == 'teom'){
+            alert($(this).val());
             $("#niveauIS").prop("disabled", true);
             $.each(stationsTeom, function(i, item){
                 $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
@@ -336,9 +335,19 @@ function setFormInSitu(){
                 $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
             });
         }else{
-            $.each(variablesAeronet1, function(i, item){
-                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-            });
+            if ($("#mesureIS").val() == 'aeronet'){
+                $.each(variablesAeronet1, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }else if ($("#mesureIS").val() == 'teom'){
+                $.each(variablesTeom, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }else{
+                $.each(variablesMeteo, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }
         }
     });
 
@@ -743,33 +752,49 @@ function getInfosMapTemporel(e){
                     var lines = text.split('\n');
                     dataset.header = lstInfos.capteur + '_' + lstInfos.produit;
                     dataset.variable = '';
-                    dataset.lon = '';
-                    dataset.lat = '';
+                    dataset.lon = lonlat.lon;
+                    dataset.lat = lonlat.lat;
                     dataset.datas = [];
                     dataset.dates = [];
-                    $.each(lines, function(lineNo, line){
-                        var items = line.split(',');
-                        if (lineNo != 0){
-                            if (items[3] != undefined){
-                                var dateISO = items[0].replace(/\D/g, " ")
-                                var dateCompo = dateISO.split(" ");
-                                dateCompo[1]--;
-                                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
-                                var tmp = [];
-                                tmp.push(dateUTC, parseFloat(items[3]))
-                                dataset.dates.push(items[0]);
-                                dataset.datas.push(tmp);
-                                dataset.lat = items[1];
-                                dataset.lon = items[2];
-                            }
-                        }else{
-                            if ((lstInfos.level) & (items[3] = parseFloat(lstInfos.level))){
-                                dataset.variable = items[4]+'\n(lonlat:'+items[2].toFixed(2)+' '+items[1].toFixed(2)+')';
+                    if (lstInfos.level == 'Layer'){
+                        $.each(lines, function(lineNo, line){
+                            var items = line.split(',');
+                            if (lineNo != 0){
+                                if (items[3] != undefined){
+                                    var dateISO = items[0].replace(/\D/g, " ")
+                                    var dateCompo = dateISO.split(" ");
+                                    dateCompo[1]--;
+                                    var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
+                                    var tmp = [];
+                                    tmp.push(dateUTC, parseFloat(items[3]))
+                                    dataset.dates.push(items[0]);
+                                    dataset.datas.push(tmp);
+                                }
                             }else{
-                                dataset.variable = items[3]+'\n(lonlat:'+items[2].toFixed(2)+' '+items[1].toFixed(2)+')';
+                                dataset.variable = items[3]+'\n(lonlat:'+lonlat.lon.toFixed(2)+' '+lonlat.lat.toFixed(2)+')';
                             }
-                        }
-                    });
+                        });
+                    }else{
+                        $.each(lines, function(lineNo, line){
+                            var items = line.split(',');
+                            if (lineNo != 0){
+                                if (items[3] != undefined){
+                                    var dateISO = items[0].replace(/\D/g, " ")
+                                    var dateCompo = dateISO.split(" ");
+                                    dateCompo[1]--;
+                                    var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
+                                    var tmp = [];
+                                    if (items[3] = $("#levelS1").val()){
+                                        tmp.push(dateUTC, parseFloat(items[4]))
+                                        dataset.dates.push(items[0]);
+                                        dataset.datas.push(tmp);
+                                    }
+                                }
+                            }else{
+                                dataset.variable = items[4]+'\n(lonlat:'+lonlat.lon.toFixed(2)+' '+lonlat.lat.toFixed(2)+')';
+                            }
+                        });
+                    }
                     updatePlot(dataset);
                 },
                 error: function(statut,erreur){
@@ -802,7 +827,7 @@ function getInfosMap(e){
                 "Loading...",
                 true, //ajout un bouton "fermer la fenetre"
                 null  //action apres close
-			);
+            );
             var lonlat = map.getLonLatFromViewPortPx(e.xy);
             //mise a jour date
             var dateForm= $("input[id='date']").val();
@@ -858,7 +883,7 @@ function getInfosMap(e){
                         }
                         res = "Lon: "+ lon.toFixed(2) + 
                               " </br>Lat: " + lat.toFixed(2) +
-        				   " </br>Value: " + truncVal;
+                              " </br>Value: " + truncVal;
                     } 
                     else{
                         res = "Impossible d'obtenir les informations demandées";
@@ -1083,7 +1108,7 @@ $('#plot').highcharts({
     },        
     tooltip: {
         xDateFormat: '%d-%m-%Y',
-        valueDecimals: 9,
+        valueDecimals: 2,
         enabled: false,
     },
     xAxis: {
@@ -1117,6 +1142,7 @@ $('#profil').click(function() {
                 $("#plot").highcharts().yAxis[i].remove(true);
             }
         }
+        $("#plot").highcharts().setTitle({text: ''}, {text: ''});
         $("#containerProfil").show();
     }else{
         $("#containerProfil").hide();
@@ -1141,8 +1167,12 @@ $("#download").on('click', function(){
     {
         return null;
     }
-    var URL = ROOT+ "/proxydownload/" + 
-    //var URL = ROOT+ "/ncss/" +
+    if (($("#ulx").val() == "") || ($("#uly").val() == "") || ($("#lrx").val() == "") || ($("#lry").val() == "")){
+        alert("Erreur ! Saisir les coordonnées !");
+        throw new Exception();
+    }
+    //var URL = ROOT+ "/proxydownload/" + 
+    var URL = "https://climdata.u-bourgogne.fr/thredds" + "/ncss/" +
         lstInfos.nomDataset +
         "/" + lstInfos.capteur +
         "/" + lstInfos.produit +
@@ -1159,7 +1189,6 @@ $("#download").on('click', function(){
         "&timeStride=" + 1 +
         "&addLatLon=true" + 
         "&accept=netcdf";
-    alert(URL);
     var link = document.createElement("a");
     link.download = 'test.nc';
     link.href = URL;
@@ -1204,6 +1233,71 @@ function layerInfo(l){
     $("#lry").val(coords.bottom);
     $("#lrx").val(coords.right);
     $("#uly").val(coords.top);
+}
+
+
+function checkLonLat(){
+    var isNumeric = /^[-+]?(\d+|\d+\.\d*|\d*\.\d+)$/;
+    // ouest
+    $("#ulx").on("change", function(){
+        if (isNumeric.test($("#ulx").val()) === false){
+            alert("Erreur de saisie: la longitude doit être entre -180° et 180°");
+            $(this).val("");
+        }
+        if ( ($("#lrx").val()) && (parseFloat($("#lrx").val()) < parseFloat($("#ulx").val())) ){ 
+            alert("La longitude EST ne peut pas être inférieure à la longitude OUEST");
+            $("#lrx").val("");
+        }
+        if (($(this).val()<-180) | ($(this).val()>180)){ 
+            alert("La longitude doit être comprise entre -180 et 180");
+            $(this).val("");
+        }
+    });
+    // est
+    $("#lrx").on("change", function(){
+        if (isNumeric.test($("#lrx").val()) === false){
+            alert("Erreur de saisie: la longitude doit être entre -180° et 180°");
+            $(this).val("");
+        }
+        if (($("#ulx").val()) && (parseFloat($("#lrx").val()) < parseFloat($("#ulx").val()))){
+            alert("La longitude EST ne peut pas être inférieure à la longitude OUEST");
+            $("#lrx").val("");
+        }
+        if (($(this).val()<-180) | ($(this).val()>180)){ 
+            alert("La longitude doit être comprise entre -90 et 90");
+            $(this).val("");
+        }
+    });
+    // nord
+    $("#uly").on("change", function(){
+        if (isNumeric.test($("#uly").val()) === false){
+            alert("Erreur de saisie: la latitude doit être entre -90° et 90°");
+            $(this).val("");
+        }
+        if (($("#lry").val()) && (parseFloat($("#lry").val()) > parseFloat($("#uly").val()))){
+            alert("La latitude SUD ne peut pas être inférieure à la latitude NORD");
+            $("#lry").val("");
+        }
+        if (($(this).val()<-90) | ($(this).val()>90)){ 
+            alert("La latitude doit être comprise entre -90° et +90°");
+            $(this).val("");
+        }
+    });
+    // sud
+    $("#lry").on("change", function(){
+        if (isNumeric.test($("#uly").val()) === false){
+            alert("Erreur de saisie: la latitude doit être entre -90° et 90°");
+            $(this).val("");
+        }
+        if ( ($("#uly").val()) && (parseInt($("#lry").val()) > parseInt($("#uly").val()))){
+            alert("La latitude SUD ne peut pas être inférieure à la latitude NORD");
+            $("#lry").val("");
+        }
+        if (($(this).val()<-90) | ($(this).val()>90)){ 
+            alert("La latitude doit être comprise entre -90° et +90°");
+            $(this).val("");
+        }
+    });
 }
 
 
@@ -1388,7 +1482,7 @@ function initMap(){
         
         if($(this).hasClass('active')){
             $("#containerExport").show();
-            
+            checkLonLat();
             polygonEditor.activate();
         }else{
             //map.removeControl(polygonEditor);
@@ -1662,14 +1756,18 @@ function setColorbar()
 }
 
 function setColorband(){
+//$("#colorband").on("change", function(){
+    alert('ok');
     var nomColorbar = $("#Colorbar").val();
     var nbColorband = $("select[name='colorbandNum']").val();
+    alert(nbColorBand);
     //var img = "<img height='200px' width='50px' marging='100px' padding='0px' src='" + ROOT + "/colorbar/catalog/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
     var img = "<img height='200px' width='50px' marging='100px' padding='0px' src='"+ "https://climdata.u-bourgogne.fr/thredds" + "/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
     $("#colorbar").html(img);
-    if(typeof map.layers[1] !== 'undefined' && map.layers[1] == 'wms'){    //si il existe déja un layer
-        map.layers[1].params.NUMCOLORBANDS = nbColorband;
-        map.layers[1].redraw(true);   //actualise la map
+    if(typeof map.layers[0] !== 'undefined' && map.layers[1] == 'wms'){    //si il existe déja un layer
+        //map.layers[1].params.NUMCOLORBANDS = nbColorband;
+        //map.layers[1].redraw(true);   //actualise la map
+        majLayer();
     }	
 }
 
@@ -1685,13 +1783,13 @@ function setMinMax(vmin, vmax){
 	var smidmin = (min+smid)/2;
 	
 	//Extremes
-	$("#smin").html(parseFloat(vmin).toPrecision(3));
-	$("#smax").html(parseFloat(vmax).toPrecision(3));
+	$("#smin").html(parseFloat(vmin).toPrecision(2));
+	$("#smax").html(parseFloat(vmax).toPrecision(2));
 	//Tiers
-	$("#smidmax").html(smidmax.toPrecision(3));
-	$("#smidmin").html(smidmin.toPrecision(3));
+	$("#smidmax").html(smidmax.toPrecision(2));
+	$("#smidmin").html(smidmin.toPrecision(2));
 	//Milieu
-	$("#smid").html(smid.toPrecision(3));
+	$("#smid").html(smid.toPrecision(2));
 }
 // #############################################################################################################
 

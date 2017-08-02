@@ -1,0 +1,104 @@
+{% load staticfiles %}
+<html lang=fr>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="shortcut icon" href="{%  static 'favicon.ico' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'select2/dist/css/select2.min.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/base.css' %}"/>
+        {% block css %}{% endblock %}
+        
+        <!--
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+              <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+              <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        -->
+        <title>TELEDM/TELEPAF</title>
+    </head>
+    <body>
+        <nav id="navbar" class="navbar navbar-fixed-top navbar-light bg-faded" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-inner">
+                    <ul class="nav navbar-nav" id="left">
+                        <li class="active"><a href={% url 'teledm:home' %}><b>Accueil</b></a></li>
+                        <li><a href={% url 'teledm:mapViewer' %}><b>Cartographie</b></a></li>
+                        <li><a href={% url 'teledm:mapDist' %}><b>Extraction Géographique</b></a></li>
+                        <li><a href={% url 'teledm:calval' %}><b>Calibration/Validation</b></a></li>
+                    </ul>
+                    <ul class="nav navbar-nav" id="right">
+                        <!--<li class="nav-item"><a class="nav-link" href="/accounts/logout/"><b>Login/Logout</b></a></li>-->
+                        <li class="nav-item"><a class="nav-link" href={% url 'portailCRC:home' %}><b>CRC</b></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div data-spy="scroll" data-target="#navbar"   data-offset="0" class="Demo">
+        <div class="container-fluid">
+            <header class="row">
+                <div class="col-lg-3" id="themes">
+                    </br>
+                    </br>
+                    <h2><center><b>TeleDM</b></center></h2>
+                    <h4><center><b>Teledetection-Poussieres-Meningite</b></center></h4>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{% static 'teledm/images/image_en_tete.jpeg' %}"/>
+                </div>
+                <div class="col-lg-3" id="missions">
+                    </br>
+                    </br>
+                    <a href="https://cnes.fr/fr"><img src="{% static 'teledm/images/cnes.jpeg' %}"/></a>
+                    <a href="http://climatologie.u-bourgogne.fr/"><img src="{% static 'teledm/images/crc.png' %}"/></a>
+                </div>
+            </header>
+            {% block page %}
+            <div class="row">
+                <aside_left class="col-lg-4" id="sectionForm">
+                    {% block form %}{% endblock %}
+                </aside_left>
+                <section class="col-lg-8" id="section1">
+                    {% block content1 %}{% endblock %}
+                </section>
+            </div>
+            <div class="row">
+                <section class="col-lg-12" id="section2">
+                    {% block content2 %}{% endblock %}
+                </section>
+            </div>
+            {% endblock %}
+            <footer>
+                <div class="row" id="logos">
+                    <a href="https://www.umr-cnrm.fr/?lang=fr"><img src="{% static 'teledm/images/cnrm.jpeg' %}"/></a>
+                    <a href="http://www.cnrs.fr/"><img src="{% static 'teledm/images/cnrs.jpeg' %}"/></a>
+                    <a href="https://www.ehesp.fr/"><img src="{% static 'teledm/images/ehesp.jpeg' %}"/></a>
+                    <a href="https://www.pasteur.fr/fr"><img src="{% static 'teledm/images/institutPasteur.jpeg' %}"/></a>
+                    <a href="https://en.ird.fr/"><img src="{% static 'teledm/images/ird.jpeg' %}"/></a>
+                    <a href="https://www.u-bourgogne.fr/"><img src="{% static 'teledm/images/ub.jpeg' %}"/></a>
+                    <a href="https://www.ulg.ac.be/cms/c_5000/fr/accueil"><img src="{% static 'teledm/images/ulg.jpeg' %}"/></a>
+                    <a href="https://www.univ-lille.fr/"><img src="{% static 'teledm/images/uLille1.jpeg' %}"/></a>
+                </div>
+           </footer>
+        </div>
+        <script type="text/javascript" src="{% static 'jquery/dist/jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+        <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+        <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>-->
+        <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>-->
+        <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js"></script>-->
+        <!--<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+        <script type="text/javascript" src="{% static 'jquery.cookie/jquery.cookie.js' %}"></script>
+        <script type="text/javascript" src="{% static 'select2/dist/js/select2.js' %}"></script>
+        <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'teledm/js/base.js' %}"></script>
+        {% block js %}{% endblock %}
+    </body>
+</html>

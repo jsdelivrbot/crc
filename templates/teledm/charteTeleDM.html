@@ -1,0 +1,125 @@
+{% load staticfiles %}
+
+
+<html lang=fr>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="{%  static 'favicon.ico' %}">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'portailCRC/css/home.css' %}" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!--
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+              <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+              <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]
+        -->
+        <title>TELEDM/TELEPAF</title>
+    </head>
+    <body>
+        <!--<img src="{% static 'teledm/images/charteTeleDM.png' %}"/>-->
+        <div class="row" id="intro" style="margin-left: 20%; margin-right: 25%">
+			<p align="justify" ><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US"><b>To
+			download data, accept the conditions below</b></span></font></font></p>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><b>Notice
+			to users</b></font></font></p>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">The
+			public domain data you are about to download are part of the TELEDM
+			database developed by the Centre de Recherches de Climatologie at UMR
+			6282 BIOGEOSCIENCES CNRS/Université de Bourgogne. </span></font></font>
+			</p>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US"><b>Use
+			of the TELEDM database  </b></span></font></font>
+			</p>
+			<p style="margin-bottom: 0cm; line-height: 100%"><font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">A
+			general acknowledgment to the TELEDM project may read : </span></font></font>
+			</p>
+			<p style="margin-bottom: 0cm; line-height: 100%">“<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">We
+			thank the TELEDM project leaded by the Centre de Recherches de
+			Climatologie (CRC at UMR 6282 BIOGEOSCIENCES CNRS/Université de
+			Bourgogne in France) for effort in establishing, developing and
+			maintaining the TELEDM climate-dust-health database and associated
+			web interface.” </span></font></font>
+			</p>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US"><b>Use
+			of the datasets </b></span></font></font>
+			</p>
+			<p style="margin-bottom: 0cm; line-height: 100%"><a name="_GoBack"></a>
+			<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">With
+			this form, I fully accept the following rules of distribution. In
+			particular :</span></font></font></p>
+			<ul>
+				<li/>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+				<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">I
+				apply for access to the data in order to perform research work;</span></font></font></p>
+				<li/>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+				<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">I
+				commit not to use data for commercial applications;</span></font></font></p>
+				<li/>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+				<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">I
+				commit to never redistribute these data to any other person or
+				institution;</span></font></font></p>
+				<li/>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+				<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">I
+				commit to contact the producer/owner of the data I required in order
+				to keep him/her informed on the use I make of the data and
+				eventually to propose him/her a scientific collaboration.</span></font></font></p>
+			</ul>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">In
+			the case of any publication, I commit :</span></font></font></p>
+			<ul>
+				<li/>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+				<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">to
+				explicitly refer to the relevant publication indicated for each data
+				set</span></font></font></p>
+				<li/>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+				<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">to
+				propose co-authorship with the data provider if the data constitute
+				a significant input to my work or to acknowledge him/her depending
+				on the data use;</span></font></font></p>
+				<li/>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+				<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">to
+				send a draft of the publication to the data provider as soon as it
+				is submitted to a journal, conference or other organization and a
+				copy of the published paper.</span></font></font></p>
+			</ul>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US"><b>Acceptation
+			of the conditions</b></span></font></font></p>
+			<p style="margin-top: 0.49cm; margin-bottom: 0.49cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span lang="en-US">If
+			you accept the above conditions, please enter your e-mail address,
+			affiliated institution, give the reason of your interest, and click
+			the &quot;Accept&quot; button <!-- Un mail est alors automatiquement envoyé avec email du demandeur, structure + objet de la demande de data  -->below
+			to download the file. If you do not agree with the above conditions,
+			click “Do Not Accept” to return to the data plots. </span></font></font>
+			</p>
+			<p lang="en-US" style="margin-bottom: 0.28cm; line-height: 108%"><br/>
+			<br/>
+
+			</p>
+			<p style="margin-bottom: 0.28cm; line-height: 108%"><br/>
+			<br/>
+			</p>
+		</div>
+	</body>
+</html>

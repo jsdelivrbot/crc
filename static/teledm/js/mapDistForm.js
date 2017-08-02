@@ -116,13 +116,10 @@ function setForm(){
         changeDates2(varInfos.debut,varInfos.fin,this.value);
         $("#variableSel").on("change", function(){
             var id = $(this).prop('selectedIndex');            
-            if (($("#capteurSel").val() == "chimere") | ($("#capteurSel").val() == "wrf")){
+            if ($("#produitSel").val() == "omaeruv"){
                 $("#levelSel").prop("disabled", false);
                 $.each(varInfos.variables.dims[id], function (i, item) {
-                    $('#levelSel').append($('<option>', { 
-                        value: item,
-                        text : item 
-                    }));
+                    $('#levelSel').append($('<option>', {value: item, text : item}));
                 });
             }
         });
@@ -231,12 +228,22 @@ function setFormInSitu(){
                 $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
             });
         }else{
-            $.each(variablesAeronet1, function(i, item){
-                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-            });
+            if ($("#mesureIS").val() == 'aeronet'){
+                $.each(variablesAeronet1, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }else if ($("#mesureIS").val() == 'teom'){
+                $.each(variablesTeom, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }else{
+                $.each(variablesMeteo, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }
         }
     });
-    
+
     $("#epidemioEP").on('change', function(){
         $("#paysEP").find("option:gt(0)").remove();
         $("#echelleEP").find("option:gt(0)").remove();
@@ -361,7 +368,7 @@ function createURL(valueSelected, selector){
             listSelected.push(this.value);
         }
     });
-    var ind = listSelected.indexOf(valueSelected);
+    var ind = listSelected.lastIndexOf(valueSelected);
     var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
     if (URL == "/catalog.xml"){
         //var URLCat = ROOT + "/catalogRefs/CatalogTELEDEM.xml";

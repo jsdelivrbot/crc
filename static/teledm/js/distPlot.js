@@ -119,9 +119,6 @@ $("#dates").on('change', function(){
     while($("#mapcontainer").highcharts().series.length > 0){
         $("#mapcontainer").highcharts().series[0].remove(true);
     }
-    //while($("#plotcontainer").highcharts().series.length > 0){
-        //$("#plotcontainer").highcharts().series[0].remove(true);
-    //}
     $.getJSON(dataset.urlShape, function(geojson){
         $("#mapcontainer").highcharts().addSeries({
             mapData: geojson,
@@ -190,7 +187,6 @@ $("#moyenne").on('submit', function(e){
             $("#plotcontainer").highcharts().hideLoading();
         },
         success: function(data){
-            console.log("success");
             var d = data.dates;
             var tmp = [];
             $.each(d, function(i,v){
@@ -224,9 +220,23 @@ $("#moyenne").on('submit', function(e){
         }
     })
 });
-
-
-
+/*
+$("#download").on('click', function(e){
+    e.preventDefault();
+    verifForm();
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        data: $("#download").serialize(),
+        success: function(data){},
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    })
+});
+*/
 // ########################## add plots ########################################################################
 
 $("#addIS").on('click', function(e){
@@ -442,7 +452,8 @@ $('#mapcontainer').highcharts('Map', {
         },
         dataLabels: {
             enabled: true,
-            format: '{point.properties.name}'
+            format: '{point.properties.name}',
+            valueDecimal: 2
         }
     }],
     credits: {
@@ -455,9 +466,14 @@ $('#plotcontainer').highcharts({
     chart:{
         type: 'spline',
         zoomType: 'xy',
+        events: {
+            load: function(){
+                this.mytooltip = new Highcharts.Tooltip(this, this.options.tooltip);
+            }
+        }
     },
     lang:{
-        decimalPoint: ','
+        decimalPoint: '.'
     },
     credits:{
         enabled: false
@@ -476,12 +492,25 @@ $('#plotcontainer').highcharts({
     },
     plotOptions: {
         series:{
+            stickyTracking: false,
+            events: {
+                click: function(evt) {
+                    this.chart.mytooltip.refresh(evt.point, evt);
+                },
+                mouseOut: function() {
+                    this.chart.mytooltip.hide();
+                },
             //pointInterval: 24*3600*1000
+            },
         },
     },        
     tooltip: {
         xDateFormat: '%Y-%m-%d',
-        valueDecimals: 9
+        valueDecimals: 2,
+        enabled: false
+        //formatter:function(){
+          //  return '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.numberFormat((this.y),2)</b>';
+        //}
     },
     xAxis: [{
         type: 'datetime',
@@ -492,7 +521,8 @@ $('#plotcontainer').highcharts({
         }
     }],
     exporting:{
-        enabled: true
+        enabled: true,
+        itemDelimiter: ';'
     },
 });
 
@@ -500,6 +530,7 @@ $('#plotcontainer').highcharts({
 $("#clear").on('click', function(){
     while($("#plotcontainer").highcharts().series.length > 0){
                 $("#plotcontainer").highcharts().series[0].remove(true);
+                $("#plotcontainer").highcharts().yAxis[0].remove(true);
             }
     //while ($("#plotcontainer").highcharts().yAxis.length != 0){
             //for (var i=0; i < $("#plotcontainer").highcharts().yAxis.length; i++){

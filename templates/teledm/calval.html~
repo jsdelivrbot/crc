@@ -10,7 +10,7 @@
 <form id="scatter" action="" method="post" class="form-horizontal">{% csrf_token %}
     <div class="row" id="Sat">
         <div class="row">
-            <label>Données Satellite/ré-analyse/modèle</label>
+            <label>Sélection de la donnée spatialisée (Satellite/ré-analyse/modèle)</label>
         </div>
         <div class="row">
             <div class="col-lg-6">
@@ -152,18 +152,15 @@
     </div>
     <div class="row" id="Zone">
         <div class="row">
-            <label>Zone d'étude (buffer / -180° 90° 180° -90°)</label>
+            <label>Zone d'étude:</br>
+            Sélectionner un buffer si comparaison entre donnée spatialisée et mesure</br>
+            Renseigner les coordonnées lon-lat min/max (dans l'intervalle -180° 90° 180° -90°) pour une comparaison entre 2 sources de données spatialisées</label>
         </div>
         <div class="row">
             <div class="col-lg-6 col-lg-offset-1">
                 <div class="row">
                     <select class="form-control" name="buffer" id="bufferIS" >
                         <option data-hidden="true">Buffer</option>
-                        <!--
-                        <option value="9">9</option>
-                        <option value="12">25</option>
-                        <option value="15">49</option>
-                        -->
                     </select>
                 </div>
             </div>
@@ -188,7 +185,7 @@
                 </div>
             </div>
         </div>
-        <A HREF="{% url 'teledm:localisation' %}" onClick="return popup(this, 'notes')">localisation</A>
+        <!--<A HREF="{% url 'teledm:localisation' %}" onClick="return popup(this, 'notes')">localisation</A>-->
     </div>
     </br>
     <div class="row">
@@ -211,7 +208,8 @@
     <!--<script type="text/javascript" src="{% static 'highcharts/js/highcharts.js' %}"></script>-->
     <script type="text/javascript" src="{% static 'highcharts-regression/highcharts-regression.js' %}"></script>
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+    <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>
+    <!--<script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>-->
     <script type="text/javascript" src="{% static 'teledm/js/calvalForm.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/localisation.js' %}"></script>
 {% endblock %}

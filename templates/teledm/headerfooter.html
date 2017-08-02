@@ -1,0 +1,46 @@
+{% load staticfiles %}
+<html lang=fr>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="{%  static 'favicon.ico' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.css"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'select2/dist/css/select2.min.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/base.css' %}"/>
+        {% block css %}{% endblock %}
+        <title>TELEDM/TELEPAF</title>
+    </head>
+    <body>
+        {% block navbar %}{% endblock %}
+        </br>
+        </br>
+        </br>
+        {% block page %}{% endblock %}
+        </br>
+        </br>
+        </br>
+        <footer>
+            <div class="text-center" id="logos">
+                <a href="https://www.umr-cnrm.fr/?lang=fr"><img src="{% static 'teledm/images/cnrm.jpeg' %}"/></a>
+                <a href="http://www.cnrs.fr/"><img src="{% static 'teledm/images/cnrs.jpeg' %}"/></a>
+                <a href="https://www.ehesp.fr/"><img src="{% static 'teledm/images/ehesp.jpeg' %}"/></a>
+                <a href="https://www.pasteur.fr/fr"><img src="{% static 'teledm/images/institutPasteur.jpeg' %}"/></a>
+                <a href="https://en.ird.fr/"><img src="{% static 'teledm/images/ird.jpeg' %}"/></a>
+                <a href="https://www.u-bourgogne.fr/"><img src="{% static 'teledm/images/ub.jpeg' %}"/></a>
+                <a href="https://www.ulg.ac.be/cms/c_5000/fr/accueil"><img src="{% static 'teledm/images/ulg.jpeg' %}"/></a>
+                <a href="https://www.univ-lille.fr/"><img src="{% static 'teledm/images/uLille1.jpeg' %}"/></a>
+            </div>
+       </footer>
+        
+        <script type="text/javascript" src="{% static 'jquery/dist/jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+        <script type="text/javascript" src="{% static 'jquery.cookie/jquery.cookie.js' %}"></script>
+        <script type="text/javascript" src="{% static 'select2/dist/js/select2.js' %}"></script>
+        <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'teledm/js/base.js' %}"></script>
+        {% block js %}{% endblock %}
+    </body>
+</html>

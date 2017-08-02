@@ -1,0 +1,174 @@
+{% load staticfiles %}
+<html lang=fr>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="{%  static 'favicon.ico' %}">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'portailCRC/css/home.css' %}" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!--
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+              <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+              <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]
+        -->
+        <title>TELEDM/TELEPAF</title>
+        <style>
+            form { display: inline;}
+        </style>
+    </head>
+    <body>
+        <div class="row" id="intro" style="margin-left: 20%; margin-right: 25%">
+            <h2>Projet TELEDM: </br>Télédétection des Dust pour les impacts Méningites
+			en Afrique de l’Ouest</h2>
+			<p align="justify" ><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">
+			Le projet s’intéresse à une région du monde
+			fortement - et régulièrement - touchée par des épidémies de
+			méningites dont l’impact sanitaire, bien que méconnu du grand
+			public, est majeur, affectant chaque année entre 25 et 250 mille
+			personnes dans une zone sub-saharienne plus communément appelée
+			«&nbsp;Ceinture de la méningite&nbsp;».  </font></font></font></font>
+			</p>
+			<p align="justify" ><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">Le
+			but du projet TELEDM est d’avancer dans la compréhension du lien
+			entre poussières désertiques et méningites bactériennes en
+			utilisant des produits de télédétection spatiale. A termes,
+			l’objectif de ce projet est de participer à la mise en place d’un
+			système d’alerte précoce des risques sanitaires associés aux
+			méningites à des échelles spatiales fines comme celle du district
+			sanitaire, qui représente, selon l’OMS, une échelle d’action-clé
+			en termes de stratégie vaccinale. </font></font></font></font>
+			</p>
+			<p align="justify" ><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">Le
+			projet, en plus de se baser sur divers produits &nbsp;«&nbsp;aérosols&nbsp;»
+			issus de la télédétection spatiale, utilisent également des
+			simulations climatiques régionales et des mesures de terrain,
+			notamment de concentrations massiques de PM10 en surface (</font></font><font color="#0000ff"><font size="2" style="font-size: 11pt"><a href="http://climatologie.u-bourgogne.fr/recherche/donnees-et-methodes/nos-mesures-terrains/360-un-teom-au-burkina-faso.html">exemple
+			du TEOM de Dédougou</a></font></font><font color="#333333"><font size="2" style="font-size: 11pt">).
+			Les données épidémiologiques de l’OMS ont également été
+			utilisées pour croisement avec les données environnementales.</font></font></font></font></p>
+			<p align="justify"><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">La
+			base de données TELEDM a été développée dans le but de
+			centraliser des jeux de données de nature différentes (satellites,
+			modèles, réanalyses, in-situ, enregistrements épidémiologiques),
+			de les agréger à des résolutions spatiales et temporelles
+			communes, ou encore de les extraire sur des entités spatiales
+			particulières (pays, district sanitaire, aire de santé) afin d’en
+			faciliter la comparaison (approche dite de </font></font><font color="#333333"><font size="2" style="font-size: 11pt"><i>calval</i></font></font><font color="#333333"><font size="2" style="font-size: 11pt">)
+			et le croisement pour la compréhension du lien
+			poussières/méningites. </font></font></font></font>
+			</p>
+			<p align="justify"><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">L’interface
+			web TELEDM est un outil de (i) cartographie des données&nbsp;; (ii)
+			extraction géographique des données&nbsp;; (iii)
+			calibration-validation à différentes échelles spatiales et
+			temporelles. Il est possible, à partir des figures réalisées via
+			l’interface, de télécharger les données traitées dans la base
+			de données TELEDM, sous couvert du respect de la<a href="{% url 'teledm:charteTeleDM' %}" onClick="return popup(this, 'notes')"> </font></font><font color="#0000ff"><font size="2" style="font-size: 11pt">
+			charte TELEDM d’utilisation des données</font></font><font color="#333333"><font size="2" style="font-size: 11pt"></a>.
+			 </font></font></font></font>
+			</p>
+			<p align="justify" style="margin-bottom: 0cm; line-height: 100%"><br/>
+			</p>
+			<p align="justify"><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">TELEDM,
+			financé par Centre National d’Etudes spatiales (CNES), a été
+			piloté par l’équipe Centre de Recherches de Climatologie à
+			Biogéosciences (Dijon) sur une période de 2 ans (2014-2015). Les
+			activités de recherches faisant suite au projet font aujourd’hui
+			partie intégrante du Centre d’Expertise Scientifique (CES)
+			thématique sur les maladies infectieuses du pôle de données
+			«&nbsp;surfaces continentales&nbsp;» THEIA du CNES. </font></font></font></font>
+			</p>
+			<p align="justify" ><a name="_GoBack"></a>
+			<font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">Les
+			partenaires du projet sont le Laboratoire d’Aérologie (Toulouse),
+			le Laboratoire d’Optique Atmosphérique (Lille</font></font><font size="2" style="font-size: 11pt">),
+			</font><font size="2" style="font-size: 11pt">le Centre National de
+			Recherches Métérologiques (Toulouse), le Laboratoire de
+			Météorologie Dynamique (Paris), le laboratoire des Maladies
+			Infectieuses et Vecteurs&nbsp;: Ecologie, Génétique, Evolution et
+			Contrôle (Montpellier), </font><font size="2" style="font-size: 11pt">le
+			Département de Parasitologie à la Faculté de Médecine de l’UCAD
+			(Dakar, Sénégal) </font><font size="2" style="font-size: 11pt">et
+			l’Ecole des Hautes Etudes en Santé Publique/Institut Pasteur
+			(Paris). </font></font></font>
+			</p>
+			<p align="justify"><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">Contact&nbsp;:
+			</font></font><a href="mailto:nadege.martiny@u-bourgogne.fr"><font size="2" style="font-size: 11pt">nadege.martiny@u-bourgogne.fr</font></a><font color="#333333"><font size="2" style="font-size: 11pt">
+			</font></font></font></font>
+			</p>
+			<p><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font color="#333333"><font size="2" style="font-size: 11pt">Références&nbsp;sur
+			la base desquelles le projet TELEDM a été initié : </font></font></font></font>
+			</p>
+			<p align="justify" style="margin-left: 0.5cm; text-indent: -0.5cm; margin-bottom: 0cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font size="2" style="font-size: 11pt">Martiny
+			N., I. Chiapello </font><font size="2" style="font-size: 11pt">(</font><font size="2" style="font-size: 11pt">2013</font><font size="2" style="font-size: 11pt">).</font><font size="2" style="font-size: 11pt">
+			</font><font size="2" style="font-size: 11pt"><span lang="en-GB">Assessments
+			for the impact of mineral dust on the meningitis incidence in West
+			Africa. </span></font><font size="2" style="font-size: 11pt"><span lang="en-GB"><i>Atmospheric
+			Environment</i></span></font><font size="2" style="font-size: 11pt"><span lang="en-GB">,</span></font><font size="2" style="font-size: 11pt"><span lang="en-GB">
+			70:245-253. </span></font></font></font>
+			</p>
+			<p align="justify" style="margin-left: 0.5cm; text-indent: -0.5cm; margin-bottom: 0cm; line-height: 100%">
+			<font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font size="2" style="font-size: 11pt"><span lang="en-US">Deroubaix
+			A., N. Martiny, I. Chiapello, B. Marticorena (2013). Suitability of
+			OMI to reflect mineral dust surface conditions: premilinary
+			application for studying the link with meningitis epidemics in the
+			Sahel. </span></font><font size="2" style="font-size: 11pt"><span lang="en-US"><i>Remote
+			Sens. Env</i></span></font><font size="2" style="font-size: 11pt"><span lang="en-US">.,
+			</span></font><font size="2" style="font-size: 11pt"><span lang="en-US">133</span></font><font size="2" style="font-size: 11pt"><span lang="en-US">,
+			116-127. </span></font></font></font>
+			</p>
+			<p style="margin-bottom: 0cm; line-height: 100%"><font face="Times New Roman, serif"><font size="3" style="font-size: 12pt"><font size="2" style="font-size: 11pt"><span lang="en-US">Agier
+			L., A. Deroubaix, N. Martiny, P. Yaka, A. Djibo, H. Broutin (2013).
+			Seasonality of meningitis in Africa and climate forcing&nbsp;:
+			aerosols stand out. </span></font><font size="2" style="font-size: 11pt"><i>J.
+			R. Soc. Interface</i></font><font size="2" style="font-size: 11pt">,
+			doi:10.1098/rsif.2012.0814.</font></font></font></p>
+        </div>
+        </br>
+        <div class="row">
+            <form action="{% url 'teledm:home' %}">
+                <button type="submit" style="margin-left: 20%; width: 150px">Accept Condition</button>
+            </form>
+            <form action="{% url 'portailCRC:home' %}">
+                <button type="submit" style="width: 130px">Do not Accept</button>
+            </form>
+        </div>
+        <!--
+        <div class="row" style="margin-left: 20%">
+            <div style="float: left; width: 130px">
+                {% block content %}
+                    <form role="form" action="" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit">Accept</button>
+                    </form>
+                {% endblock %}
+                <form action="{% url 'portailCRC:home' %}">
+                    <button type="submit">Do not Accept</button>
+                </form>
+            </div>
+        </div>
+        -->
+    </body>
+</html>
+
+{% block js %}
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqtree/1.3.6/tree.jquery.min.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+    <!--<script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>-->
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqtree/1.3.6/tree.jquery.js"></script>-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.3/jstree.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.20.0/ol.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{% static 'teledm/js/base.js' %}"></script>
+    <script type="text/javascript" src="{% static 'teledm/js/home.js' %}"></script>
+{% endblock %}

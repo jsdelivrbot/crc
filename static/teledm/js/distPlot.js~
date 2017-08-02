@@ -52,7 +52,10 @@ function verifForm(){
         alert("Erreur ! Aucune variable selectionnée !");
         throw new Exception();
     }
-    if($('#levelSel').val() == 'layer'){
+    var level = $("#levelS1").val();
+    if((level=='Layer') & ($('#levelS1').is(':disabled') == false))
+    {
+        
         alert("Erreur ! Aucun niveau de couche sélectionné !");
         throw new Exception();
     }
@@ -303,7 +306,6 @@ $("#addIS").on('click', function(e){
 
 $("#addEP").on('click', function(e){
     e.preventDefault();
-    alert('ok');
     if($("#epidemioEP").val() == 'Type'){
         alert("Erreur ! Aucun type de mesure sélectionné !");
         throw new Exception();
@@ -440,7 +442,8 @@ $('#mapcontainer').highcharts('Map', {
         },
         dataLabels: {
             enabled: true,
-            format: '{point.properties.name}'
+            format: '{point.properties.name}',
+            valueDecimal: 2
         }
     }],
     credits: {
@@ -453,9 +456,14 @@ $('#plotcontainer').highcharts({
     chart:{
         type: 'spline',
         zoomType: 'xy',
+        events: {
+            load: function(){
+                this.mytooltip = new Highcharts.Tooltip(this, this.options.tooltip);
+            }
+        }
     },
     lang:{
-        decimalPoint: ','
+        decimalPoint: '.'
     },
     credits:{
         enabled: false
@@ -474,12 +482,25 @@ $('#plotcontainer').highcharts({
     },
     plotOptions: {
         series:{
+            stickyTracking: false,
+            events: {
+                click: function(evt) {
+                    this.chart.mytooltip.refresh(evt.point, evt);
+                },
+                mouseOut: function() {
+                    this.chart.mytooltip.hide();
+                },
             //pointInterval: 24*3600*1000
+            },
         },
     },        
     tooltip: {
         xDateFormat: '%Y-%m-%d',
-        valueDecimals: 9
+        valueDecimals: 2,
+        enabled: false
+        //formatter:function(){
+          //  return '<span style="color:'+this.series.color+'">'+this.series.name+'</span>: <b>'+Highcharts.numberFormat((this.y),2)</b>';
+        //}
     },
     xAxis: [{
         type: 'datetime',
@@ -498,6 +519,7 @@ $('#plotcontainer').highcharts({
 $("#clear").on('click', function(){
     while($("#plotcontainer").highcharts().series.length > 0){
                 $("#plotcontainer").highcharts().series[0].remove(true);
+                $("#plotcontainer").highcharts().yAxis[0].remove(true);
             }
     //while ($("#plotcontainer").highcharts().yAxis.length != 0){
             //for (var i=0; i < $("#plotcontainer").highcharts().yAxis.length; i++){

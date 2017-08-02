@@ -7,4 +7,19 @@ function popup(mylink, windowname) {
     //page.document.write("<input type='button' value='accept' onclick='gotoreserve()'>");
     return false; 
 }
-     
+
+function sendMail(){
+    alert(ROOT);
+    alert($("#email").val());
+    alert($("#subject").val());
+    var link = "mailto:"+$("#email").val()
+             + "?cc=''"
+             + "&subject=" + escape($("#subject").val())
+             + "&body=" + escape($("#textarea").val())
+    ;
+    
+
+    window.location.href = link;
+    location.href = ROOT;
+    
+}

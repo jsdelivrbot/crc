@@ -11,7 +11,7 @@
     <form id="moyenne" action="" method="post" class="form-horizontal">{% csrf_token %}      
         <div class="row" id="Sat">
             <div class="row">
-                <label>Sélection de la donnée</label>
+                <label>Sélection de la donnée spatialisée</label>
             </div>
             <div class="row">
                 <div class="col-lg-6">
@@ -79,16 +79,16 @@
         </div>
         </br>
         <div>
-            <input type="submit" value="SUBMIT" name="submit">
+            <input type="submit" value="Extraction" name="submit">
         </div>
     </form>
     <form action="" method="post" class="form-horizontal">{% csrf_token %}
         <input class="form-control" type="hidden" name= "filename" id="filename" value="">
-        <input type="submit" value="Download" name="submit">
+        <input type="submit" value="Téléchargement" name="submit" title="Téléchargement de l'extraction au format netcdf'">
     </form>
     <div class="row">
-        "{% url 'teledm:scriptPy' code=readNC.py  as scriptUrl %}"
-        <a href="{{ scriptUrl}}">readNC.py</a>
+        <label>Scripts de conversion netcdf vers csv: </label>
+        <a href="{% url 'teledm:scriptPy' %}">readNC.py</a>
         <a href="{% url 'teledm:scriptR' %}">readNC.R</a>
     </div>
 </div>
@@ -123,6 +123,12 @@
 
 {% block content2 %}
     <div class="row" id="containerProfil">
+        <div class="row">
+            <label>Après l'étape d'extraction, un click gauche sur l'une des zones géographiques de la carte affichera le profil temporel sur la période précédemment sélectionnée</br>
+            Il est possible de mettre en regard des mesures (aeronet, teom ou météorologique) et des données épidémiologiques en sélectionnant les paramètres dans les menus ci-dessous
+            </label>
+        </div>
+        </br>
         <div class="row">
             <div class="col-lg-4">
                 <div class="row">
@@ -221,7 +227,8 @@
     <!--<script type="text/javascript" src="{% static 'highcharts/js/highcharts.js' %}"></script>-->
     <!--<script type="text/javascript" src="{% static 'highmaps/js/highmaps.js' %}"></script>-->
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+    <!--<script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>-->
+    <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/mapDistForm.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/distPlot.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/home.js' %}"></script>

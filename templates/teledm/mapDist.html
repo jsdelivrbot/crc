@@ -4,17 +4,54 @@
 {% block css%}
     <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/form.css' %}" >
 {% endblock %}
-
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <a class="navbar-brand pull-right" href="https://cnes.fr/fr"><img src="{% static 'teledm/images/cnes.jpeg' %}" height="50px"></a>
+            <a class="navbar-brand pull-right" href="http://climatologie.u-bourgogne.fr/"><img src="{% static 'teledm/images/crc.png' %}" height="50px"/></a>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href={% url 'portailCRC:home' %}><b>Portail</b></a>
+                    </li>
+                    <li>
+                        <a href={% url 'teledm:home' %}><b>Accueil TeleDM</b></a>
+                    </li>
+                    <li>
+                        <a href={% url 'teledm:mapViewer' %}><b>Cartographie</b></a>
+                    </li>
+                    <li class="active">
+                        <a href={% url 'teledm:mapDist' %}><b>Extraction Géographique</b></a>
+                    </li>
+                    <li>
+                        <a href={% url 'teledm:calval' %}><b>Calibration/Validation</b></a>
+                    </li>
+                    <li>
+                        
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
 {% block form %}
 </br>
 <div class="row">
     <form id="moyenne" action="" method="post" class="form-horizontal">{% csrf_token %}      
         <div class="row" id="Sat">
             <div class="row">
-                <label>Sélection de la donnée</label>
+                <label>Sélection de la donnée spatialisée</label>
             </div>
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-sm-6 col-md-6 col-lg-6">
                     <select class="form-control" name="type" id="typeSel" >
                         <option selected hidden>Type de données</option>
                     </select>
@@ -25,7 +62,7 @@
                         <option selected hidden>Produit</option>
                     </select>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-sm-6 col-md-6 col-lg-6">
                     <select class="form-control" name="resospatiale" id="resospatialeSel" >
                         <option selected hidden>Résolution spatiale</option>
                     </select>
@@ -46,13 +83,13 @@
                 <label>Période de traitement : </label>
             </div>
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-sm-6 col-md-6 col-lg-6">
                     <div class="input-group">
                         <label for="date1" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
                         <input id="date1" name="datedebut" type="text" class="date-picker form-control"/>
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-sm-6 col-md-6 col-lg-6">
                     <div class="input-group">
                         <label for="date2" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
                         <input id="date2" name="datefin" type="text" class="date-picker form-control"/>
@@ -65,12 +102,12 @@
                     <label>Zone et découpage géographique</label>
             </div>
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-sm-6 col-md-6 col-lg-6">
                     <select class="form-control" name="pays" id="pays">
                         <option selected hidden>Pays</option>
                     </select>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-sm-6 col-md-6 col-lg-6">
                     <select class="form-control" name="decoupage" id="decoupage" >
                         <option selected hidden><b>Echelle de découpage</b></option>
                     </select>
@@ -79,16 +116,16 @@
         </div>
         </br>
         <div>
-            <input type="submit" value="SUBMIT" name="submit">
+            <input type="submit" value="Extraction" name="submit">
         </div>
     </form>
     <form action="" method="post" class="form-horizontal">{% csrf_token %}
         <input class="form-control" type="hidden" name= "filename" id="filename" value="">
-        <input type="submit" value="Download" name="submit">
+        <input id="download" type="submit" value="Téléchargement" name="submit" title="Téléchargement de l'extraction au format netcdf">
     </form>
     <div class="row">
-        {% url 'teledm:scriptPy' code=readNC.py  as scriptUrl %}
-        <a href="{{ scriptUrl}}">readNC.py</a>
+        <label>Scripts de conversion netcdf vers csv: </label>
+        <a href="{% url 'teledm:scriptPy' %}">readNC.py</a>
         <a href="{% url 'teledm:scriptR' %}">readNC.R</a>
     </div>
 </div>
@@ -124,29 +161,35 @@
 {% block content2 %}
     <div class="row" id="containerProfil">
         <div class="row">
-            <div class="col-lg-4">
+            <label>Après l'étape d'extraction, un click gauche sur l'une des zones géographiques de la carte affichera le profil temporel sur la période précédemment sélectionnée</br>
+            Il est possible de mettre en regard des mesures (aeronet, teom ou météorologique) et des données épidémiologiques en sélectionnant les paramètres dans les menus ci-dessous
+            </label>
+        </div>
+        </br>
+        <div class="row">
+            <div class="col-sm-4 col-md-4 col-lg-4">
                 <div class="row">
                     <label>Mesures in situ</label>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <select class="form-control" name="mesure" id="mesureIS" >
                             <option selected hidden>Type</option>
                         </select>
                     </div>
-                    <div class="col-lg-4">                    
+                    <div class="col-sm-4 col-md-4 col-lg-4">                    
                         <select class="form-control" name="stations" id="stationsIS" >
                             <option selected hidden>Station</option>
                         </select>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <select class="form-control" name="niveau" id="niveauIS" >
                             <option selected hidden>Niveau</option>
                         </select>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <select class="form-control" name="variables" id="variablesIS" >
                             <option selected hidden>Variable</option>
                         </select>
@@ -156,49 +199,49 @@
                             <option selected hidden>Resolution Temporelle</option>
                         </select>
                     </div>
-                    <div class="col-lg-4">                    
+                    <div class="col-sm-4 col-md-4 col-lg-4">                    
                         <input type="button" id="addIS" value="Plot"/>
                     </div>
                 </div>                
             </div>
-            <div class="col-lg-4">
+            <div class="col-sm-4 col-md-4 col-lg-4">
                 <div class="row">
                     <label>Donnees Epidemiologiques</label>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <select class="form-control" name="epidemio" id="epidemioEP" >
                             <option selected hidden>Type</option>
                         </select>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <select class="form-control" name="pays" id="paysEP" >
                             <option selected hidden>Pays</option>
                         </select>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <select class="form-control" name="echelle" id="echelleEP" >
                             <option selected hidden>Echelle</option>
                         </select>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <select class="form-control" name="district" id="districtEP" >
                             <option selected hidden>District</option>
                         </select>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <select class="form-control" name="variables" id="variableEP" >
                             <option selected hidden>Variable</option>
                         </select>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <input type="button" id="addEP" value="Plot"/>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-sm-4 col-md-4 col-lg-4">
                 </br>
                 <input type="button" id="clear" value="Clear" name="clear"/>
             </div>
@@ -213,15 +256,10 @@
     <script type="text/javascript">
         var addr = "{% static 'teledm/shapes/' %}";
     </script>
-    <!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>-->
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript" src="https://code.highcharts.com/maps/modules/map.js"></script>
-    
-    <!--<script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>-->
-    <!--<script type="text/javascript" src="{% static 'highcharts/js/highcharts.js' %}"></script>-->
-    <!--<script type="text/javascript" src="{% static 'highmaps/js/highmaps.js' %}"></script>-->
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+    <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/mapDistForm.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/distPlot.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/home.js' %}"></script>

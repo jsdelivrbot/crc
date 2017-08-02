@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response, HttpResponse, render
+from django.shortcuts import render_to_response, HttpResponse, render, HttpResponseRedirect, redirect
+from django.core.mail import send_mail, BadHeaderError
 from wsgiref.util import FileWrapper
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
@@ -17,6 +18,7 @@ import numpy as np
 from datetime import datetime
 
 from pathFiles import PathFile
+from forms import ContactForm
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
 from scatterPlots import scatterSatStation, scatter2Sat_Temporel, scatter2Sat_Spatial, scatterSatEpidemio
@@ -89,18 +91,38 @@ def proxyWMS(request, path):
 
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+def validation(request):
+    return render(request, 'teledm/validation.html')
+
 def home(request):
     return render(request, 'teledm/home.html')
 
 
-def scriptPy(request, code):
-    script = code
-    filename = os.path.join(settings.STATIC_ROOT, 'teledm/scripts', script)
+def nc2txtPy(request):
+    filename = os.path.join(settings.STATIC_ROOT, 'teledm/scripts/nc2txt.py')
     wrapper = FileWrapper(open(filename))
     content_type = mimetypes.guess_type(filename)[0]
     response = HttpResponse(wrapper,content_type=content_type)
     response['Content-Length'] = os.path.getsize(filename)
-    response['Content-Disposition'] = "attachment; filename=%s" % script
+    response['Content-Disposition'] = "attachment; filename=%s" % 'nc2txt.py'
+    return response
+
+def nc2txtR(request):
+    filename = os.path.join(settings.STATIC_ROOT, 'teledm/scripts/nc2txt.R')
+    wrapper = FileWrapper(open(filename))
+    content_type = mimetypes.guess_type(filename)[0]
+    response = HttpResponse(wrapper,content_type=content_type)
+    response['Content-Length'] = os.path.getsize(filename)
+    response['Content-Disposition'] = "attachment; filename=%s" % 'nc2txt.R'
+    return response
+
+def scriptPy(request):
+    filename = os.path.join(settings.STATIC_ROOT, 'teledm/scripts/readNC.py')
+    wrapper = FileWrapper(open(filename))
+    content_type = mimetypes.guess_type(filename)[0]
+    response = HttpResponse(wrapper,content_type=content_type)
+    response['Content-Length'] = os.path.getsize(filename)
+    response['Content-Disposition'] = "attachment; filename=%s" % 'readNC.py'
     return response
 
 def scriptR(request):
@@ -111,6 +133,7 @@ def scriptR(request):
     response['Content-Length'] = os.path.getsize(filename)
     response['Content-Disposition'] = "attachment; filename=%s" % 'readNC.R'
     return response
+
 
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
@@ -197,9 +220,11 @@ def mapDist(request):
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='application/json')
     else:
         if 'submit' in kwargs.keys():
-            print(os.path.join(tmpDir, kwargs['filename']))
-            filesend = os.path.join(tmpDir, kwargs['filename'])
-            return sendfile(request, filesend)
+            if kwargs['filename']:
+                filesend = os.path.join(tmpDir, kwargs['filename'])
+                return sendfile(request, filesend)
+            else:
+                return render(request, 'teledm/erreur.html')
         else:
             return render(request, 'teledm/mapDist.html')
 

@@ -4,31 +4,69 @@
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/form.css' %}" >
 {% endblock %}
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <a class="navbar-brand pull-right" href="https://cnes.fr/fr"><img src="{% static 'teledm/images/cnes.jpeg' %}" height="50px"></a>
+            <a class="navbar-brand pull-right" href="http://climatologie.u-bourgogne.fr/"><img src="{% static 'teledm/images/crc.png' %}" height="50px"/></a>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href={% url 'portailCRC:home' %}><b>Portail</b></a>
+                    </li>
+                    <li>
+                        <a href={% url 'teledm:home' %}><b>Accueil TeleDM</b></a>
+                    </li>
+                    <li>
+                        <a href={% url 'teledm:mapViewer' %}><b>Cartographie</b></a>
+                    </li>
+                    <li>
+                        <a href={% url 'teledm:mapDist' %}><b>Extraction Géographique</b></a>
+                    </li>
+                    <li class="active">
+                        <a href={% url 'teledm:calval' %}><b>Calibration/Validation</b></a>
+                    </li>
+                    <li>
+                        
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
 
 {% block form %}
 </br>
 <form id="scatter" action="" method="post" class="form-horizontal">{% csrf_token %}
     <div class="row" id="Sat">
         <div class="row">
-            <label>Données Satellite/ré-analyse/modèle</label>
+            <label>Sélection de la donnée spatialisée (Satellite/ré-analyse/modèle)</label>
         </div>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-sm-6 col-md-6 col-lg-6">
                 <label>Source 1</label>
             </div>
-            <div class="col-lg-3">
+            <div class="col-sm-3 col-md-3 col-lg-3">
                 <div class="checkbox">
                     <label><input type="checkbox" id="checkboxSr2" value="S2" onclick="" ><em>Source 2</em></label>
                 </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-sm-3 col-md-3 col-lg-3">
                 <div class="checkbox">
                     <label><input type="checkbox" id="Option" value="Option" onclick="" ><em>Spatial</em></label>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-sm-6 col-md-6 col-lg-6">
                 <select class="form-control" name="type1" id="typeS1" >
                     <option data-hidden="true">Type de données</option>
                 </select>
@@ -51,7 +89,7 @@
                     <option data-hidden="true">Layer</option>
                 </select>
             </div>
-            <div class="col-lg-6">
+            <div class="col-sm-6 col-md-6 col-lg-6">
                 <select class="form-control" name="type2" id="typeS2" disabled="true" >
                     <option data-hidden="true">Type de données</option>
                 </select>
@@ -78,7 +116,7 @@
     </div>
     <div class="row" id="InSitu">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-sm-6 col-md-6 col-lg-6">
                 <div class="row">
                     <div class="checkbox">
                         <label><input type="checkbox" id="checkboxS3" value="S3" onclick=""><em>Mesures</em></label>
@@ -100,7 +138,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-sm-6 col-md-6 col-lg-6">
                 <div class="row">
                     <div class="checkbox">
                         <label><input type="checkbox" id="checkboxS4" value="S4" onclick=""><em>Epidemiologie</em></label>
@@ -129,7 +167,7 @@
             <label>Période de traitement : </label>
         </div>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-sm-6 col-md-6 col-lg-6">
                 <div class="row">
                     <div class="input-group">
                         <label for="date1" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
@@ -140,7 +178,7 @@
                 <div class="row">
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-sm-6 col-md-6 col-lg-6">
                 <div class="row">
                     <div class="input-group">
                         <label for="date2" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
@@ -152,10 +190,12 @@
     </div>
     <div class="row" id="Zone">
         <div class="row">
-            <label>Zone d'étude (buffer / -180° 90° 180° -90°)</label>
+            <label>Zone d'étude:</br>
+            Sélectionner un buffer si comparaison entre une source de donnée spatialisée et une station de mesure(aeronet, teom, météorologique)</br>
+            Renseigner les coordonnées lon-lat min/max (dans l'intervalle -180° 90° 180° -90°) pour une comparaison entre 2 sources de données spatialisées</label>
         </div>
         <div class="row">
-            <div class="col-lg-6 col-lg-offset-1">
+            <div class="col-sm-6 col-md-6 col-lg-6 col-lg-offset-1">
                 <div class="row">
                     <select class="form-control" name="buffer" id="bufferIS" >
                         <option data-hidden="true">Buffer</option>
@@ -183,7 +223,6 @@
                 </div>
             </div>
         </div>
-        <A HREF="{% url 'teledm:localisation' %}" onClick="return popup(this, 'notes')">localisation</A>
     </div>
     </br>
     <div class="row">
@@ -200,13 +239,9 @@
 
 {% block js %}
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
-    
-    <!--<script type="text/javascript" src="//rawgithub.com/phpepe/highcharts-regression/master/highcharts-regression.js"> </script>-->
-    <!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>-->
-    <!--<script type="text/javascript" src="{% static 'highcharts/js/highcharts.js' %}"></script>-->
     <script type="text/javascript" src="{% static 'highcharts-regression/highcharts-regression.js' %}"></script>
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+    <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/calvalForm.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/localisation.js' %}"></script>
 {% endblock %}

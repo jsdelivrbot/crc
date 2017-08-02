@@ -56,13 +56,13 @@ BOWER_INSTALLED_APPS = (
 )
 
 ## smtp config
-EMAIL_USE_TLS = True
+#EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'teledm@u-bourgogne.fr'
 SERVER_EMAIL = 'teledm@u-bourgogne.fr'
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+#EMAIL_HOST_USER = ''
+#EMAIL_HOST_PASSWORD = ''
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 ## SENDFILE settings

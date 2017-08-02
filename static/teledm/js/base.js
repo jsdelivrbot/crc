@@ -7,7 +7,7 @@ const ROOT = "https://climdata.u-bourgogne.fr/teledm";
 var geoDist = ['Niger_district_sante', 'Mali_district_sante','Burkina_aire_sante', 'Burkina_district_sante',];
 var mesures = ["aeronet", "teom", "meteo"];
 var integration = ['+-1h','+-5h'];
-var buffers = [9, 25, 49];
+var buffers = [3, 9, 25, 49];
 
 //------------variables teom --------------------------------------
 var stationsTeom = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
@@ -111,6 +111,7 @@ var meningiteVar = {
 var selection_geographique = {"Benin":["district","pays"],
                               "Burkina":["aire","district","pays"],
                               "Mali":["district","pays"],
+                              "Niger":["district","pays"],
                               "Senegal":["pays"]
                              };
 var meningiteDist = {
